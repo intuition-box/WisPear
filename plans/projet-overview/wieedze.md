@@ -1,250 +1,250 @@
-# Vision du Projet Wispr
+# Wispr Project Vision
 
-> **"Construire des agents, sans les construire."**
+> **"Build agents, without building them."**
 
-## Le Problème
+## The Problem
 
-Construire un agent IA performant aujourd'hui demande de naviguer un écosystème fragmenté, opaque, et en mouvement constant. Les outils existent. La connaissance collective, non.
+Building a performant AI agent today requires navigating a fragmented, opaque, and constantly evolving ecosystem. The tools exist. The collective knowledge does not.
 
-**Les défis concrets :**
-- Connaître l'écosystème des outils — MCPs, packages npm, SDKs — pour chaque use case
-- Choisir le bon modèle selon la tâche, le budget, la latence attendue
-- Rédiger un system prompt efficace qui ne hallucine pas et ne dérive pas
-- Itérer longuement avant d'obtenir quelque chose de fiable en production
-- Recommencer tout cela à chaque nouveau use case
-- Ne jamais savoir si l'outil qu'on utilise est vraiment le meilleur disponible
+**Concrete challenges:**
+- Knowing the ecosystem of tools — MCPs, npm packages, SDKs — for each use case
+- Choosing the right model based on task, budget, and expected latency
+- Writing an effective system prompt that doesn't hallucinate or drift
+- Iterating extensively before getting something reliable in production
+- Repeating all of this for every new use case
+- Never knowing if the tool you're using is truly the best available
 
-**C'est inaccessible au novice. C'est chronophage pour l'expert.** Et il n'existe pas de couche de confiance collective sur la qualité des outils.
-
----
-
-## La Vision
-
-**Wispr** transforme une intention formulée en langage naturel en agent opérationnel, certifié par une communauté et hébergeable en moins d'une minute.
-
-Wispr est un **knowledge graph curé on-chain**, couplé à un builder IA, couplé à des incitations économiques pour que la communauté maintienne la qualité du graph en permanence.
-
-**La couche Web3 n'est pas un gadget.** Elle est la fondation d'un système de confiance ouvert, où chaque outil, chaque package, chaque skill a une réputation traçable, et où ceux qui construisent cette réputation sont récompensés.
+**It's inaccessible to novices. It's time-consuming for experts.** And there's no collective trust layer on tool quality.
 
 ---
 
-## Architecture en 3 Couches
+## The Vision
 
-Trois couches distinctes, pensées pour fonctionner ensemble. Chaque couche apporte une valeur autonome et renforce les deux autres.
+**Wispr** transforms an intention expressed in natural language into an operational agent, community-certified and hostable in less than a minute.
 
-### 🎨 Couche 1 : Builder (UX/UI)
+Wispr is a **curated on-chain knowledge graph**, coupled with an AI builder, coupled with economic incentives so the community maintains graph quality permanently.
 
-**L'interface accessible à tous. L'utilisateur ne configure rien — il décrit son besoin.**
-
-- Connexion email → embedded wallet créé silencieusement (invisible pour le novice)
-- Chat en langage naturel : l'utilisateur décrit son besoin ou son use case
-- Un LLM analyse la demande et génère un meta-prompt optimisé
-- L'UI affiche une stack recommandée : blocs visuels (tools, skills, MCPs, modèle)
-- Chaque bloc affiche son score de trust et ses curateurs actifs
-- Deux sorties : injecter le prompt ailleurs, ou héberger l'agent directement sur Wispr
-
-### ⛓️ Couche 2 : Registry On-Chain (Données)
-
-**L'index de vérité. Tous les objets consommables par un agent, écrits sur Intuition Protocol.**
-
-- Chaque objet (tool, skill, MCP, package, modèle, prompt) est un atom Intuition
-- Métadonnées structurées : URL, description, contexte d'usage, compatibilité
-- Score de trust calculé à partir des stakes des curateurs (atoms/triples)
-- Le Builder ne recommande que des objets indexés et actifs dans le Registry
-- Open : n'importe qui peut proposer un objet, la curation filtre la qualité
-
-### 💰 Couche 3 : Curation Économique (Incentives)
-
-**L'intelligence collective avec des incentives réels. Les bons outils montent, les mauvais tombent.**
-
-- Les curateurs définissent leur domaine de prédilection (TypeScript, RAG, Web scraping…)
-- Ils reçoivent des propositions d'objets à curate dans leur domaine
-- Ils stakent des tokens TRUST sur les objets qu'ils jugent de qualité
-- Récompensés proportionnellement à l'adoption : plus un objet est utilisé, plus ils gagnent
-- Dashboard : profil, domaines, stakes actifs, historique des gains, trust score
-- Incentive d'être précoce : staker tôt sur un objet qui monte = rendement maximal
+**The Web3 layer is not a gimmick.** It's the foundation of an open trust system, where every tool, every package, every skill has a traceable reputation, and where those who build that reputation are rewarded.
 
 ---
 
-## Propositions de Valeur
+## 3-Layer Architecture
 
-### Pour les Utilisateurs Novices
-- **Connexion simplifiée**: Authentification Web2 (email) avec création automatique d'embedded wallet
-- **Interface intuitive**: Blocs visuels d'outils avec interaction visuelle
-- **Guidance intelligente**: LLM qui analyse les besoins et propose la meilleure configuration
-- **Zéro configuration**: Packages pré-configurés pour les cas d'usage courants
-- **Hébergement géré**: Possibilité d'héberger les agents créés
+Three distinct layers, designed to work together. Each layer provides autonomous value and reinforces the other two.
 
-### Pour les Utilisateurs Confirmés
-- **Customisation avancée**: Meta-prompts injectables partout
-- **Catalogue complet**: Accès à tous les objets (packages, skills, MCPs) avec documentation détaillée
-- **Transparence**: URLs, utilité, contexte et réputation pour chaque outil
-- **Contrôle total**: Choix manuel des composants si désiré
+### 🎨 Layer 1: Builder (UX/UI)
 
-### Pour les Curateurs
-- **Monétisation de l'expertise**: Gagner des tokens en faisant de la curation
-- **Dashboard personnalisé**: Profil adapté aux domaines de prédilection
-- **Système de réputation**: Staking sur les bons outils = gains proportionnels
-- **Impact direct**: Améliorer la qualité globale de la plateforme
+**The interface accessible to everyone. The user configures nothing — they describe their need.**
 
-### Pour l'Écosystème
-- **Quality assurance**: Système de réputation basé sur le staking et l'usage réel
-- **Découvrabilité**: Les meilleurs outils émergent naturellement
-- **Standards**: Registry centralisé des objets nécessaires aux agents
-- **Certification Web3**: Traçabilité et authenticité des outils validés
+- Email login → embedded wallet created silently (invisible to novices)
+- Natural language chat: user describes their need or use case
+- An LLM analyzes the request and generates an optimized meta-prompt
+- The UI displays a recommended stack: visual blocks (tools, skills, MCPs, model)
+- Each block displays its trust score and active curators
+- Two outputs: inject the prompt elsewhere, or host the agent directly on Wispr
+
+### ⛓️ Layer 2: On-Chain Registry (Data)
+
+**The source of truth. All objects consumable by an agent, written on Intuition Protocol.**
+
+- Each object (tool, skill, MCP, package, model, prompt) is an Intuition atom
+- Structured metadata: URL, description, usage context, compatibility
+- Trust score calculated from curator stakes (atoms/triples)
+- The Builder only recommends objects indexed and active in the Registry
+- Open: anyone can propose an object, curation filters quality
+
+### 💰 Layer 3: Economic Curation (Incentives)
+
+**Collective intelligence with real incentives. Good tools rise, bad ones fall.**
+
+- Curators define their area of expertise (TypeScript, RAG, Web scraping…)
+- They receive proposals for objects to curate in their domain
+- They stake TRUST tokens on objects they judge to be quality
+- Rewarded proportionally to adoption: the more an object is used, the more they earn
+- Dashboard: profile, domains, active stakes, earnings history, trust score
+- Early-bird incentive: staking early on a rising object = maximum return
+
+---
+
+## Value Propositions
+
+### For Novice Users
+- **Simplified login**: Web2 authentication (email) with automatic embedded wallet creation
+- **Intuitive interface**: Visual tool blocks with visual interaction
+- **Intelligent guidance**: LLM that analyzes needs and proposes the best configuration
+- **Zero configuration**: Pre-configured packages for common use cases
+- **Managed hosting**: Ability to host created agents
+
+### For Advanced Users
+- **Advanced customization**: Meta-prompts injectable anywhere
+- **Complete catalog**: Access to all objects (packages, skills, MCPs) with detailed documentation
+- **Transparency**: URLs, utility, context and reputation for each tool
+- **Total control**: Manual component selection if desired
+
+### For Curators
+- **Monetization of expertise**: Earn tokens by curating
+- **Personalized dashboard**: Profile adapted to areas of expertise
+- **Reputation system**: Staking on good tools = proportional gains
+- **Direct impact**: Improve overall platform quality
+
+### For the Ecosystem
+- **Quality assurance**: Reputation system based on staking and real usage
+- **Discoverability**: The best tools naturally emerge
+- **Standards**: Centralized registry of objects needed for agents
+- **Web3 certification**: Traceability and authenticity of validated tools
 
 ---
 
 ## User Flows
 
-### Flow 1: Utilisateur Novice - Création d'Agent
+### Flow 1: Novice User - Agent Creation
 
 ```
-1. Connexion
+1. Connection
    └─> Email (Web2)
-   └─> Création automatique d'embedded wallet
+   └─> Automatic embedded wallet creation
 
-2. Expression du besoin
+2. Need expression
    └─> Chat interface
-   └─> Description en langage naturel de la tâche
+   └─> Natural language task description
 
-3. Analyse intelligente
-   └─> LLM analyse la demande
-   └─> Génération d'une configuration optimale:
-       ├─> Skills recommandés
-       ├─> Packages appropriés
-       ├─> Modèle le plus accurate
-       └─> Meta-prompt généré
+3. Intelligent analysis
+   └─> LLM analyzes the request
+   └─> Optimal configuration generation:
+       ├─> Recommended skills
+       ├─> Appropriate packages
+       ├─> Most accurate model
+       └─> Generated meta-prompt
 
-4. Visualisation de la configuration
-   └─> Interface à blocs visuels
-   └─> Chaque bloc représente un outil/skill/package
-   └─> Informations affichées:
-       ├─> Nom et description
-       ├─> Score de réputation
-       ├─> Contexte d'utilisation
-       └─> URL de documentation
+4. Configuration visualization
+   └─> Visual block interface
+   └─> Each block represents a tool/skill/package
+   └─> Displayed information:
+       ├─> Name and description
+       ├─> Reputation score
+       ├─> Usage context
+       └─> Documentation URL
 
-5. Validation et déploiement
-   └─> Ajustements optionnels via l'interface
-   └─> Option d'hébergement de l'agent
-   └─> Lancement et utilisation
+5. Validation and deployment
+   └─> Optional adjustments via interface
+   └─> Agent hosting option
+   └─> Launch and use
 ```
 
-### Flow 2: Utilisateur Confirmé - Customisation Avancée
+### Flow 2: Advanced User - Advanced Customization
 
 ```
-1. Connexion
-   └─> Même processus (Email + embedded wallet)
+1. Connection
+   └─> Same process (Email + embedded wallet)
 
-2. Exploration du catalogue
-   └─> Accès au registry complet
-   └─> Filtres par:
+2. Catalog exploration
+   └─> Access to complete registry
+   └─> Filters by:
        ├─> Type (skill, package, MCP, model)
-       ├─> Réputation
-       ├─> Domaine/catégorie
+       ├─> Reputation
+       ├─> Domain/category
        └─> Version
 
-3. Construction manuelle
-   └─> Sélection des composants souhaités
-   └─> Édition du meta-prompt
-   └─> Configuration fine des paramètres
+3. Manual construction
+   └─> Selection of desired components
+   └─> Meta-prompt editing
+   └─> Fine parameter configuration
 
-4. Injection et test
-   └─> Injection du prompt où souhaité
-   └─> Tests et itérations
-   └─> Sauvegarde de la configuration
+4. Injection and testing
+   └─> Inject prompt where desired
+   └─> Testing and iterations
+   └─> Configuration save
 
-5. Partage (optionnel)
-   └─> Publication de la configuration comme package
-   └─> Contribution à l'écosystème
+5. Sharing (optional)
+   └─> Publish configuration as package
+   └─> Contribute to ecosystem
 ```
 
-### Flow 3: Curateur - Validation d'Outils
+### Flow 3: Curator - Tool Validation
 
 ```
-1. Onboarding curateur
-   └─> Création de profil
-   └─> Définition des domaines d'expertise:
-       ├─> Stack technique
-       ├─> Types d'agents
-       └─> Domaines métiers
+1. Curator onboarding
+   └─> Profile creation
+   └─> Expertise domain definition:
+       ├─> Technical stack
+       ├─> Agent types
+       └─> Business domains
 
-2. Dashboard personnalisé
-   └─> Suggestions de curation basées sur le profil
-   └─> Nouveaux outils à valider dans les domaines d'expertise
-   └─> Métriques de performance des outils déjà stakés
+2. Personalized dashboard
+   └─> Curation suggestions based on profile
+   └─> New tools to validate in expertise domains
+   └─> Performance metrics of already staked tools
 
-3. Processus de curation
-   └─> Dépense de tokens de subscription
-   └─> Analyse de l'outil:
-       ├─> Test fonctionnel
-       ├─> Revue de documentation
-       ├─> Vérification de compatibilité
-       └─> Évaluation de la qualité
+3. Curation process
+   └─> Spend subscription tokens
+   └─> Tool analysis:
+       ├─> Functional testing
+       ├─> Documentation review
+       ├─> Compatibility verification
+       └─> Quality evaluation
 
-4. Staking et certification
-   └─> Décision de staking (montant)
-   └─> Ajout de métadonnées:
-       ├─> Contexte d'utilisation
-       ├─> Cas d'usage recommandés
-       ├─> Notes et warnings
-       └─> Tags et catégorisation
+4. Staking and certification
+   └─> Staking decision (amount)
+   └─> Metadata addition:
+       ├─> Usage context
+       ├─> Recommended use cases
+       ├─> Notes and warnings
+       └─> Tags and categorization
 
-5. Gains et réputation
-   └─> Gains proportionnels à:
-       ├─> Usage de l'outil
-       ├─> Score de réputation de l'outil
-       └─> Montant staké
-   └─> Construction de réputation personnelle comme curateur
+5. Gains and reputation
+   └─> Gains proportional to:
+       ├─> Tool usage
+       ├─> Tool reputation score
+       └─> Staked amount
+   └─> Build personal reputation as curator
 ```
 
 ---
 
-## Le "Wow Effect"
+## The "Wow Effect"
 
-L'utilité ne suffit pas. Ce qui reste dans la mémoire d'un utilisateur, c'est un moment précis. Voici les quatre moments candidats.
+Utility is not enough. What stays in a user's memory is a precise moment. Here are the four candidate moments.
 
-### 1. Construction en Direct
-Les blocs de la stack s'animent et se placent dans l'UI au fur et à mesure que le LLM analyse. Pas un loader. Une construction visible en temps réel.
+### 1. Live Construction
+The stack blocks animate and place themselves in the UI as the LLM analyzes. Not a loader. A visible construction in real-time.
 
-### 2. Le Score qui Respire
-Le trust score n'est pas une étoile figée. Il fluctue. Tu vois en quasi-temps réel combien de tokens sont stakés sur chaque outil et par qui.
+### 2. The Breathing Score
+The trust score isn't a frozen star. It fluctuates. You see in quasi-real-time how many tokens are staked on each tool and by whom.
 
-### 3. La Peau dans le Jeu Visible
-Le profil de chaque curateur est public. "Jean-Baptiste, expert TypeScript, 847 TRUST." Ce n'est pas un algorithme — c'est un humain qui a misé sa réputation.
+### 3. Visible Skin in the Game
+Each curator's profile is public. "Jean-Baptiste, TypeScript expert, 847 TRUST." This isn't an algorithm — it's a human who put their reputation on the line.
 
-### 4. Zéro Setup, Premier Run
-Email → agent qui tourne. Aucune clé API à configurer, aucun repo à cloner, aucun prompt à écrire. Le wow dès la première utilisation.
+### 4. Zero Setup, First Run
+Email → agent running. No API keys to configure, no repo to clone, no prompt to write. The wow from the first use.
 
 ---
 
-## Questions Ouvertes
+## Open Questions
 
-1. **Monétisation**: Quel modèle économique pour la plateforme?
-   - Subscription pour accès premium?
-   - Frais sur les transactions de staking?
-   - Marketplace avec commissions?
+1. **Monetization**: What economic model for the platform?
+   - Subscription for premium access?
+   - Fees on staking transactions?
+   - Marketplace with commissions?
 
-2. **Hébergement**: Infrastructure pour héberger les agents?
-   - Partenariats cloud?
-   - Décentralisé (compute on-chain)?
+2. **Hosting**: Infrastructure to host agents?
+   - Cloud partnerships?
+   - Decentralized (on-chain compute)?
    - Hybrid?
 
-3. **LLM d'analyse**: Quel modèle pour l'analyse des besoins?
-   - Modèle propriétaire fine-tuné?
-   - Ensemble de modèles?
-   - Pipeline multi-agents?
+3. **Analysis LLM**: Which model for needs analysis?
+   - Proprietary fine-tuned model?
+   - Ensemble of models?
+   - Multi-agent pipeline?
 
-4. **Wow Effect**: Comment créer l'effet wow dès l'onboarding?
-   - Démo interactive immédiate?
-   - Résultats impressionnants sur cas d'usage populaires?
-   - Vitesse d'exécution ultra-rapide?
-   - Interface visuelle spectaculaire?
+4. **Wow Effect**: How to create the wow effect from onboarding?
+   - Immediate interactive demo?
+   - Impressive results on popular use cases?
+   - Ultra-fast execution speed?
+   - Spectacular visual interface?
 
-5. **Bootstrap du Registry**: Comment amorcer le Registry avant d'avoir des curateurs?
-   - Phase de curation centralisée par l'équipe core?
-   - Seed initial avec les packages les plus populaires?
-   - Partenariats avec des experts pour la curation initiale?
+5. **Registry Bootstrap**: How to bootstrap the Registry before having curators?
+   - Centralized curation phase by core team?
+   - Initial seed with most popular packages?
+   - Partnerships with experts for initial curation?
 
-6. **Relation avec Intuition/Sofia**: Wispr est-il un produit autonome qui utilise Intuition, ou la nouvelle face grand public de Sofia?
+6. **Relationship with Intuition/Sofia**: Is Wispr a standalone product using Intuition, or the new public-facing version of Sofia?
