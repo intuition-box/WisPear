@@ -53,11 +53,9 @@ This is not a chatbot with a better prompt. It's a new paradigm — AI learns th
 
 ---
 
-## User Flow
+## Common — Swipe Onboarding
 
-### 1. Swipe `/swipe`
-
-Adaptive card deck, max 8 questions, no account needed.
+Both apps start with the same onboarding. Adaptive card deck, max 8 questions, no account needed.
 
 **Block 1 — Role** (max 4 questions)
 ```
@@ -93,25 +91,11 @@ Output: `Profile { role, level }` → used to personalize everything downstream.
 
 ---
 
-### 2. My Stack `/profile`
+## App 1 — User (no wallet)
 
-After profiling, the user lands on their **pre-filled stack page**. Based on the detected profile, Wispr recommends a set of components (packages, APIs, LLMs, MCP servers, skills) relevant to their domain.
+### 1. Chat `/chat`
 
-**The user's first action is a contribution:**
-- Review each recommended component — keep or remove
-- **Button +** to search and add atoms not in the initial recommendation
-- Each component card shows: name, type, trust score, curator count
-- Trust scores "breathe" — they fluctuate in real-time as curators stake/unstake. Click any component to see who staked and how much — visible skin in the game.
-
-**Publish** → certify on-chain that "these components are good for MY domain". Each publication = Intuition attestation. This is the user's **portable agentic skills profile**.
-
-This means **every user who publishes their stack feeds the knowledge graph** — not just curators.
-
----
-
-### 3. Chat (transversal)
-
-The chat is **not a step in the flow — it's available everywhere**, as an overlay or sidebar. The user can open it at any point to:
+The user lands on a **chat interface** after swipe. Available as the main view and accessible everywhere as an overlay or sidebar.
 
 - Ask questions about a component ("what does this MCP server do?", "what's the difference between X and Y?")
 - Get recommendations ("what's the best ORM for serverless?")
@@ -131,11 +115,23 @@ Blueprint output includes:
 - **One-shot install prompt** — single command to configure your local environment
 - **Publish on-chain** — Intuition triples + ENS subname `{name}.wispr.eth`
 
-The chat is essential for novices who don't know what to put in their profile. For experts, it's optional.
+Essential for novices who don't know what to put in their profile. Optional for experts.
 
----
+### 2. My Stack `/profile`
 
-### 4. Explorer `/explorer`
+The user's **pre-filled stack page**. Based on the detected profile, Wispr recommends a set of components (packages, APIs, LLMs, MCP servers, skills) relevant to their domain.
+
+**The user's first action is a contribution:**
+- Review each recommended component — keep or remove
+- **Button +** to search and add atoms not in the initial recommendation
+- Each component card shows: name, type, trust score, curator count
+- Trust scores "breathe" — they fluctuate in real-time as curators stake/unstake. Click any component to see who staked and how much — visible skin in the game.
+
+**Publish** → certify on-chain that "these components are good for MY domain". Each publication = Intuition attestation. This is the user's **portable agentic skills profile**.
+
+Every user who publishes their stack feeds the knowledge graph — not just curators.
+
+### 3. Explorer `/explorer`
 
 Two tabs:
 
@@ -151,9 +147,7 @@ Two tabs:
 - Full set locked — stake $TRUST to unlock → stake goes to the set's bonding curve
 - The more a set is staked, the higher it rises in ranking
 
----
-
-### 5. Battle `/battle`
+### 4. Battle `/battle`
 
 Compare your blueprint against another builder's:
 - Input: wallet address or ENS of the challenger
@@ -161,6 +155,46 @@ Compare your blueprint against another builder's:
 - Shared tools highlighted, divergences explained
 - Compatibility score
 - Shareable URL
+
+---
+
+## App 2 — Curator (wallet connected, explicit opt-in)
+
+Curators access everything from App 1, plus the following.
+
+### 1. Curator Onboarding
+
+Deliberate opt-in after wallet connection:
+- Declares expertise domains, tools used in production, identity links (ENS, GitHub, Farcaster)
+- First $TRUST stake — the entry signal
+- Unlocks the curator dashboard
+
+### 2. Quests
+
+Topic-scoped curation sessions where curators position themselves on components.
+
+A quest is tied to a **developer topic** (e.g. "Auth for Next.js", "Best ORMs for serverless"). For each component, the curator signals: **Yes** (good for this topic), **No** (not good), or **Skip** (no opinion). Each signal = on-chain attestation.
+
+**Mobile — Swipe UX:**
+- Swipe right = Yes, left = No, up = Skip
+- Each card shows: component name, type, short description, current trust score
+- Fast, tactile, completable in under 2 minutes
+
+**Desktop — Organic set management:**
+- All components for the topic visible at once (grid or list view)
+- Drag-and-drop or toggle-based sorting: Yes / No / Skip columns
+- Batch actions, inline context, expand to see existing attestations before deciding
+
+Quests can be system-generated (trending topics, new components, graph gaps) or community-proposed.
+
+### 3. Component Creation
+
+**Curator-only privilege.** Users can attest on existing components, but only curators can add new ones to the registry.
+
+- Submit a new component (on-chain Atom)
+- Fill normalized schema (type, capabilities, domains, inputs/outputs, permissions, cost, risk, compatibility)
+- Enrich existing component metadata
+- Create thematic collections ("Best tools for DeFi agents", "Research agent starter pack")
 
 ---
 
