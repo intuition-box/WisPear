@@ -9,6 +9,15 @@ Even if an agent's reputation could be relevant at a given moment, it won't hold
 ## Goals
 <!-- What are the main goals for this hackathon? -->
 
+## Partners
+
+| Partner | Usage |
+|---|---|
+| **Intuition Protocol** | Knowledge graph + on-chain attestations + recommendation via MCP (TVL-based) |
+| **ENS** | Portable identity — `{name}.wispr.eth` |
+| **0G** | Decentralized LLM database — source for recommending specific LLMs as components |
+| **Reown** | Multi-chain wallet connection |
+
 ## Value Proposition
 
 **Wispr** is a recommendation engine for agentic components. It matchmakes the best components to use in a given context. Instead of evaluating an agent as a whole, Wispr evaluates and recommends each building block: which LLM, which MCP server, which API, which skill to use for a specific use case.
@@ -40,8 +49,9 @@ These contextual preferences feed the knowledge graph. Wispr then aggregates the
 - **Home screen**: an AI chatbox
 - The user expresses their intent in natural language (e.g., "I want to build a web platform for sharing cooking recipes")
 - The Wispr agent responds with a recommended component preset, delivered as 2 outcomes:
-  - **Visual gallery** of components to use (clear overview of each building block)
+  - **Animated visual gallery** — component blocks build up in real-time as the AI decides (not a static list, a visible construction process). Trust scores "breathe" (fluctuate live as curators stake/unstake). Click any component to see who staked and how much — visible skin in the game.
   - **One-shot prompt** to install these components in a single command in their local environment
+- **CTA "Contribute to Wispr"** — if the user is unsatisfied with results, they're invited to become a curator. The novice app doubles as an entry point for the curator persona
 
 ### 2. Wispr Agent (standalone component)
 - Receives the novice user's intent
@@ -49,10 +59,10 @@ These contextual preferences feed the knowledge graph. Wispr then aggregates the
 - **Queries the Intuition knowledge graph** with these claims to surface the top recommended components for that context
 - Returns results to the novice app
 
-### 3. Wispr Skill / MCP — direct access from your LLM
-- Equivalent of skills.sh (Vercel Labs) but for Wispr
-- Lets you query component recommendations directly from your LLM environment (Claude, etc.) without going through the novice app
-- Same Wispr agent on the backend, but exposed as an installable skill/MCP
+### 3. Wispr Skill — dynamic component loader for LLMs
+- Equivalent of `find-skill` (skills.sh / Vercel Labs) but powered by Wispr's knowledge graph
+- Allows an LLM to **dynamically load the right skills and resources based on context** — no manual configuration needed
+- The LLM asks Wispr Skill what it needs, Wispr queries the graph and returns the best components to load on the fly
 
 ### 4. Wispr Feedback API
 - Collects feedback throughout the course of a project (called by the Wispr skill during usage)
@@ -69,13 +79,38 @@ These contextual preferences feed the knowledge graph. Wispr then aggregates the
   - Domain expertise (web, design, project management, etc.)
   - AI expertise level
 - Once the profile is established → ask them to **curate their preferred components** by topic/subcategory related to their expertise
+- **Battle / Bundle Comparison**: curators can compare their bundle against another builder's (split view, shared tools highlighted, compatibility score, shareable URL)
 
 ## Intuition Protocol Integration
 
 Intuition Protocol **is** the knowledge graph. It's the foundational data layer of the project: user preferences (component X for context Y) are stored as on-chain triples on Intuition. The protocol provides the permissionless structure and signal credibility.
 
+**Recommendation engine is fully delegated to Intuition's MCP**, which relies on TVL (Total Value Locked) as the ranking signal. The more curators stake on a component for a given context, the higher it ranks.
+
+**Economics are handled by Intuition Protocol natively:**
+- Curators stake $TRUST tokens on components they vouch for
+- TVL per component per context = the reputation signal
+- Bonding curves, early staking rewards, quality filtering — all built into Intuition
+
+
 ## Priorities
-<!-- What's most important to deliver during the hackathon? -->
+
+**P0 — Hackathon Demo:**
+- Swipe onboarding (curator profiling)
+- Chat interface (novice intent → recommendations)
+- Wispr Agent (semantic claim extraction + Intuition graph query)
+- Animated visual gallery of recommended components
+- One-shot install prompt export
+- Curator CTA from novice app
+- Initial ontology + seed data
+- On-chain attestations via Intuition
+
+**P1 — Post-hackathon:**
+- Wispr Skill for direct LLM access
+- Battle feature
+- ENS identity (`{name}.wispr.eth`)
+- $TRUST staking mechanics
+- Feedback API
 
 ## Risks & Open Questions
 <!-- Uncertainties, identified risks, questions for the team -->
