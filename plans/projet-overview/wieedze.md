@@ -1,100 +1,192 @@
 # Wispr Project Vision
 
-> **"Build agents, without building them."**
+> **"Collective intelligence whispered to AI before it responds."**
+
+---
 
 ## The Problem
 
-Building a performant AI agent today requires navigating a fragmented, opaque, and constantly evolving ecosystem. The tools exist. The collective knowledge does not.
+LLMs don't know what **really works** — not in your context, not with your stack, not in 2025.
 
-**Concrete challenges:**
-- Knowing the ecosystem of tools — MCPs, npm packages, SDKs — for each use case
-- Choosing the right model based on task, budget, and expected latency
-- Writing an effective system prompt that doesn't hallucinate or drift
-- Iterating extensively before getting something reliable in production
-- Repeating all of this for every new use case
-- Never knowing if the tool you're using is truly the best available
+**Three fundamental issues:**
 
-**It's inaccessible to novices. It's time-consuming for experts.** And there's no collective trust layer on tool quality.
+1. **Frozen knowledge**: Models don't know that tools deprecated APIs, became standards, or cause production conflicts.
+
+2. **Missing context**: "Which auth solution?" has different answers for serverless vs monolith, solo dev vs team.
+
+3. **Lost experience**: Thousands of developers solve the same problems daily. That knowledge disappears.
+
+**Result**: Building AI agents means navigating a fragmented ecosystem alone. No trust layer. No collective memory.
 
 ---
 
 ## The Vision
 
-**Wispr** transforms an intention expressed in natural language into an operational agent, community-certified and ready to deploy in under a minute.
+**Wispr** is where developers' collective intelligence becomes the context for AI responses.
 
-Wispr is a **decentralized registry of AI agent components** built on Intuition Protocol. Every tool, skill, and package has a verifiable reputation anchored on-chain, where community members stake their conviction on quality.
+Before generating anything, Wispr queries a **living knowledge graph** — built by practitioners who've shipped with these tools. The AI receives pre-resolved context: which components work, validated by real humans on-chain.
 
-**The Web3 layer is not a gimmick.** It's the foundation of an open trust system, where every component has a traceable reputation, and where those who build that reputation are rewarded.
+**This is not a chatbot with a better prompt.** It's a new paradigm — AI learns not through training, but through continuous community attestation.
 
 ---
 
-## 3-Layer Architecture
+## How It Changes Everything
 
-Three distinct layers, designed to work together. Each layer provides autonomous value and reinforces the other two.
+### For Users
+The difference is **invisible but radical**. You ask Wispr like asking a senior dev who's built it three times. No exploration. No ten options. Just the right answer, backed by collective experience.
 
-### 🎨 Layer 1: Builder (UX/UI)
+### For the Graph
+A **living system** that grows continuously. Every curator attestation enriches it. The graph learns through community validation.
 
-**The interface accessible to everyone. The user configures nothing — they describe their need.**
+### For the Ecosystem
+A shared asset: operational knowledge about AI tools — neutral, verifiable, community-owned.
 
-**Swipe Onboarding:**
-- Tinder-style card deck (max 8 questions)
-- Detects developer profile: role (Frontend, Backend, Web3, etc.) + AI maturity level
-- No account needed, instant profiling
+---
 
-**Natural Language Input:**
-- After profiling, user describes their need in plain English
-- "I want an agent that monitors GitHub issues and summarizes them daily"
-- AI analyzes profile + need to generate personalized recommendations
+## User Experience
 
-**Visual Stack Construction:**
-- Animated blocks appear in real-time as AI decides
-- Each block shows: tool name, trust score, active curators
-- Live construction (not a static loader) = memorable first impression
+### Step 1: Describe Your Need
 
-**Dual Output:**
-- **Export**: Copy-paste ready configs (system prompt, MCP setup, install commands)
-- **Publish**: Save bundle on-chain as verifiable attestation
+Just type in plain English:
+```
+"Build a Next.js agent that monitors GitHub issues and sends daily summaries"
+```
 
-### ⛓️ Layer 2: On-Chain Registry (Data)
+No setup. No API keys. No technical knowledge required.
 
-**The source of truth. All AI agent components registered as Intuition Protocol attestations.**
+### Step 2: Wispr Queries the Graph
 
-**Knowledge Graph Structure:**
-- Every component (MCP server, npm package, LLM model, prompt template) = Intuition atom
-- Relationships between components = Intuition triples
-- Example: `(Filesystem MCP, compatible_with, Claude Sonnet 4.5)`
+**What happens behind the scenes**:
+```
+1. Intent classification: Next.js + GitHub + scheduling
+2. Graph query → Top validated components:
+   - GitHub MCP (9.1/10, 23 attestations)
+   - Vercel AI SDK (8.9/10, 31 attestations)
+3. Pre-resolved context injected into AI
+```
 
-**Trust Scores:**
-- Calculated from community stakes (deposited $TRUST tokens)
-- Uses the "I" atom pattern: all users deposit on the same component = consolidated market signal
-- TVL (total value locked) = quantified conviction
-- Depositor count = adoption breadth
+**Key difference**:
+- **Standard LLM**: "Here are 10 GitHub integrations... which do you prefer?"
+- **Wispr**: "I'll use GitHub MCP (validated for Next.js)" → generates code directly
 
-**Verifiable & Open:**
-- Anyone can query the registry via public GraphQL endpoint
-- All attestations immutably recorded on Intuition L3 chain
-- Transparent history of who staked what, when
+### Step 3: Receive Working Solution
 
-### 💰 Layer 3: Economic Curation (Incentives)
+You get **two outputs**:
 
-**Collective intelligence with skin-in-the-game. Good tools rise, bad ones fall.**
+1. **Working code** — Ready to run, pre-configured with validated components
+2. **Exportable config** — System prompt, MCP setup, install commands (copy-paste into Claude Desktop, Cursor, etc.)
 
-**Curator Flow:**
-- Define expertise domains (TypeScript, RAG, Web scraping, etc.)
-- Receive tool curation proposals matching their profile
-- Stake $TRUST tokens on components they validate as quality
-- Public curator profiles: reputation builds over time based on accuracy
+### Step 4: If Unsatisfied
 
-**Incentive Alignment:**
-- Curators earn proportionally to component adoption
-- Early staking on rising tools = maximum returns
-- Bad calls = opportunity cost (capital locked in low-adoption tools)
-- Creates natural quality filter without central authority
+**"Contribute to Wispr"** button appears → Become a curator, shape what Wispr recommends.
 
-**Market Dynamics:**
-- Trust scores = live market signal (not static reviews)
-- Capital-weighted conviction (whales and experts have proportional influence)
-- Comparative markets: bullish vs bearish stances on competing tools
+---
+
+## Two Modes
+
+### Default Mode (90% of users)
+- No visible graph, no jargon
+- Just fast, accurate answers
+- The graph works invisibly
+
+### Advanced Mode (experts, demos)
+- Animated blocks showing selection in real-time
+- Trust scores visible ("9.1/10 from 23 curators")
+- Customizable stack
+
+Toggle between modes.
+
+---
+
+## Becoming a Curator
+
+### Who Are Curators?
+
+Practitioners with real experience who've shipped projects.
+
+### The Flow
+
+```
+Bad response
+  ↓
+"Contribute to Wispr"
+  ↓
+Quick profiling (6-8 questions)
+  ↓
+Curator dashboard
+```
+
+### What Curators Do
+
+Rate components in their domains:
+- **Relevance**: Does it solve the problem well?
+- **Developer Experience**: Pleasant to work with?
+- **Reliability**: Works in production?
+
+Submit → On-chain attestation → Reputation updates → Next response benefits.
+
+**Self-scaling**: Every bad response recruits a potential curator.
+
+---
+
+## The Living Graph
+
+### Simple Structure
+
+**Components**: GitHub MCP, Clerk auth, Claude Sonnet, etc.
+
+**Contexts**: Next.js + AI agents, Python pipelines, etc.
+
+**Attestations**: What curators say
+- "GitHub MCP works great for Next.js" (9/10)
+- "Clerk is perfect for startups" (8/10)
+
+### Reputation
+
+**Hackathon**: Simple average
+```
+reputation = Σ scores / attestations
+
+Example: GitHub MCP (9/10 + 10/10 + 9/10) / 3 = 9.3/10
+```
+
+**Post-Hackathon**: Economic weight (curators stake tokens, higher stakes = more influence)
+
+### Why On-Chain?
+
+- **Verifiable**: Anyone can audit
+- **Permanent**: Can't be deleted/manipulated
+- **Transparent**: See who vouched for each tool
+
+Built on **Intuition Protocol** (L3 chain for attestations).
+
+---
+
+## What Wispr Is Not
+
+**Not a search engine** → No public rankings. Reputation serves generation.
+
+**Not a review platform** → Curators aren't anonymous. Attestations tied to on-chain identity.
+
+**Not an improved LLM** → Same models, better context.
+
+**Not just for beginners** → Experts benefit most.
+
+---
+
+## The Wow Moments
+
+### 1. Zero to Agent in 60 Seconds
+Describe need → Code ready. No API keys. No setup.
+
+### 2. Invisible Intelligence
+Answers are suspiciously good. Like having a senior dev on call.
+
+### 3. Visible Trust (Advanced Mode)
+See real humans vouching. "23 curators, avg 9.1/10." Not algorithms. People with skin in the game.
+
+### 4. Living Knowledge
+The graph gets smarter daily. Your attestation today improves responses tomorrow.
 
 ---
 
@@ -102,123 +194,67 @@ Three distinct layers, designed to work together. Each layer provides autonomous
 
 ### What We're Building
 
-**P0 - Core Demo:**
-- ✅ Swipe onboarding (profile detection in <2 min)
-- ✅ Natural language agent builder (chat interface)
-- ✅ AI-powered stack generation (LLM recommends from registry)
-- ✅ Animated block UI (real-time visual construction)
-- ✅ Bundle export (copy-paste ready configs)
-- ✅ Publish to Intuition (bundles as on-chain attestations)
-- ✅ Trust score visualization (show staked amounts & curators)
+**Core Experience**:
+- Chat interface (plain English input)
+- Graph query (10-15 pre-seeded components)
+- Code generation (direct, no exploration)
+- Config export (copy-paste ready)
+- Curator flow (onboarding + attestation)
 
-**Simplified for Hackathon:**
-- Registry = 10-15 pre-seeded components (we create before demo)
-- Trust scores = mock stakes (real data structure, fake deposits)
-- Curators = hardcoded profiles (concept demonstration)
-- Read-only registry (users can't add new components in P0)
+**Demo Features**:
+- Animated blocks (switchable visual mode)
+- Trust scores display
+- Simple attestation dashboard
 
-**What This Proves:**
-- AI-powered agent matchmaking works
-- On-chain attestations create verifiable trust layer
-- Natural language → production config in <1 minute
-- Community curation model is viable (shown via mock data)
+**Simplified**:
+- Pre-seeded graph (we create before demo)
+- Social curation (no token staking yet)
+- Single context (Next.js + AI agents)
 
----
+### Post-Hackathon
 
-## Value Propositions
+**Economic Layer** (P1):
+- Stake tokens on attestations
+- Earn rewards from adoption
+- TVL-weighted reputation
 
-### For Novice Users
-- **Zero learning curve**: Describe need in plain English, get working agent config
-- **Guided profiling**: 8 questions determine optimal setup
-- **Instant export**: Copy-paste into Claude Desktop, Cursor, or any agent framework
-- **Trust transparency**: See exactly which experts vouch for each tool
-
-### For Advanced Users
-- **Time savings**: Skip hours of research, get curated recommendations
-- **Customization**: Edit generated configs, swap components manually
-- **Discovery**: Browse entire registry with filters (type, reputation, domain)
-- **Contribution**: Share your bundle configurations back to the community
-
-### For Curators 
-- **Monetize expertise**: Earn by validating quality tools in your domain
-- **Reputation building**: Public track record of curation accuracy
-- **Early-bird advantage**: Stake on rising tools before they're mainstream
-- **Direct impact**: Shape the quality of the entire ecosystem
-
-### For the Ecosystem
-- **Quality assurance**: Market-driven filtering (not algorithmic black boxes)
-- **Discoverability**: Best tools naturally rise through capital conviction
-- **Interoperability**: Standardized component metadata enables composition
-- **Verifiable trust**: On-chain attestations = portable reputation across platforms
+**Expansion**:
+- Multi-context (Python, Rust, mobile)
+- Anyone can propose components
+- Agent hosting
 
 ---
 
-## The "Wow Effect"
+## Why This Matters
 
-Utility is not enough. What stays in a user's memory is a precise moment. Here are our four wow moments.
+**For Developers**: Stop wasting hours researching. Get validated answers from people who've shipped.
 
-### 1. Live Construction
-The stack blocks animate and place themselves in the UI as the AI analyzes your need. Not a loading spinner. Not a static result. A **visible building process** that shows the AI thinking.
+**For Curators**: Shape what AI recommends to thousands. Build reputation. Earn rewards.
 
-### 2. The Breathing Score
-Trust scores aren't frozen stars. They **fluctuate in real-time** as curators stake and unstake. You see: "847 $TRUST staked by 23 curators" and watch it change. Living market signal, not dead review count.
+**For AI**: Operational knowledge, continuously updated, context-aware. Not frozen training data.
 
-### 3. Visible Skin in the Game
-Click any tool to see who staked on it. Real wallet addresses. Real amounts. "0x1234...5678 staked 500 $TRUST." This isn't an algorithm recommending—it's **humans putting capital at risk** to vouch for quality.
-
-### 4. Zero Setup, First Run
-Email → swipe 8 questions → describe need → agent config ready. **No API keys. No repo cloning. No prompt engineering.** The wow happens in the first 60 seconds.
+**For Web3**: Proves on-chain attestations create real value beyond speculation.
 
 ---
 
 ## Pitch (30 seconds)
 
-> **"We're building the decentralized registry for AI agent components using Intuition Protocol."**
+> **"We're building collective intelligence for AI."**
 >
-> **The problem:** No trust layer for AI tools. You don't know which MCP servers, packages, or prompts are quality.
+> **Problem**: LLMs hallucinate about tools. They don't know what works in production.
 >
-> **Our solution:** Community-curated attestations with skin-in-the-game stakes, anchored on-chain.
+> **Solution**: A living knowledge graph where developers attest to what actually works. Before responding, AI queries the graph.
 >
-> **What we built in 48h:**
-> - AI-powered agent builder with natural language input
-> - Bundles published as verifiable attestations on Intuition
-> - Trust scores visualization (showing future staking economics)
-> - One-click export to production-ready configs
+> **Demo**: Natural language → production code in under 60 seconds. Components validated by practitioners, on-chain.
 >
-> **Post-hackathon:** Real staking mechanism, curator rewards, portable ENS identity.
+> **Post-hackathon**: Economic staking, curator rewards, expansion.
 
 ---
 
 ## Open Questions
 
-1. **Monetization**: What economic model for the platform?
-   - Subscription for premium access?
-   - Fees on staking transactions?
-   - Marketplace with commissions?
-   - Grant-funded public good?
-
-2. **Registry Governance**: Who can add components post-hackathon?
-   - Open submission with curator approval?
-   - Minimum stake requirement to propose?
-   - Reputation threshold for auto-approval?
-
-3. **Cross-Chain Strategy**: Should bundles be portable across chains?
-   - Intuition L3 as source of truth, mirror to Base/Optimism?
-   - Multi-chain attestations with unified trust scores?
-   - Single-chain for simplicity?
-
-4. **LLM Provider**: Which model for need analysis?
-   - OpenAI GPT-4 (reliable, expensive)
-   - Anthropic Claude (good at analysis, API cost)
-   - Open-source fine-tuned model (control, upfront cost)
-   - Ensemble approach (multiple models vote)?
-
-5. **Curator Incentives**: How to bootstrap before real stakes?
-   - Retroactive rewards for early curators?
-   - Initial airdrop to experts who seed registry?
-   - Team-operated curators until critical mass?
-
-6. **Agent Hosting**: Infrastructure for post-hackathon hosting?
-   - Partnership with compute providers (Akash, Render)?
-   - Self-hosted by default (we just generate configs)?
-   - Hybrid (optional hosted tier for non-technical users)?
+1. How to bootstrap initial curators?
+2. When to migrate from social to economic curation?
+3. How much code to generate? (Full apps vs configs)
+4. When to show graph vs hide it?
+5. Which contexts to expand to first?
