@@ -1,4 +1,4 @@
-# Wispr
+$# Wispr
 
 > Swipe to build your perfect AI agent stack.
 
@@ -63,12 +63,21 @@ Output: `Profile { role, level }` → stored in Zustand.
 
 ### 2. Explorer `/explorer`
 
-Product catalogue filtered by detected profile. Same UX pattern as the EthCC agenda app.
+Two tabs:
 
+**Products** — catalogue filtered by detected profile
 - Products recommended for the profile appear first, highlighted
 - Filter bar: All / LLM / MCP / Package / API / Tool
-- Each card: name · description · type · price · Add/Remove
+- Each card: name · description · type · Add/Remove
 - FAB: cart count → `/bundle`
+
+**Community Sets** — browse other builders' bundles
+- Filter by role: Smart Contract Dev / Frontend / Backend / PM / Founder…
+- Filter by level: Beginner / Intermediate / Advanced / Expert
+- Each set card: profile badge · $TRUST score · first 3 tools visible (preview only)
+- Full set (all tools + system prompt) locked — requires staking $TRUST to unlock
+- Stake $TRUST → unlock full content · stake goes to the set's bonding curve
+- The more a set is staked, the higher its $TRUST score → rises in ranking
 
 ---
 
@@ -92,19 +101,6 @@ Auto-generated from profile + cart selections.
 - Shared tools highlighted
 - Compatibility score: X tools in common
 - Shareable URL
-
----
-
-## Tech Stack
-
-```
-React 19 + TypeScript + Vite
-react-router-dom v7
-Framer Motion        → swipe animations
-Zustand              → global state (persisted)
-ethers.js v6         → wallet + Intuition (P1)
-CSS vanilla          → Botly dark theme
-```
 
 ---
 
