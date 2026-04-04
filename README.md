@@ -8,6 +8,7 @@ Collective wisdom, whispered to your agent.
 |-----|-----|
 | Chat | https://chat.wispear.ai |
 | Curator | https://curator.wispear.ai |
+| Swipe | https://swipe.wispear.ai |
 | UI (Storybook) | https://ui.wispear.ai |
 
 ## Development
@@ -30,6 +31,9 @@ pnpm --filter @wispr/chat dev
 
 # Curator app — http://localhost:3001
 pnpm --filter @wispr/curator dev
+
+# Swipe app — http://localhost:3002
+pnpm --filter @wispr/swipe dev
 
 # UI Storybook — http://localhost:6006
 pnpm --filter @wispr/ui storybook
