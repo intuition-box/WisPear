@@ -25,7 +25,6 @@ export async function POST(req: Request) {
     components = await query(client, claims);
     console.log("[wispr] components:", components.length);
   } catch (err) {
-    // Invalidate the client so next request gets a fresh one
     await closeIntuitionClient();
     console.error("[wispr] pipeline failed:", err);
     return Response.json({ error: (err as Error).message }, { status: 500 });
@@ -33,9 +32,9 @@ export async function POST(req: Request) {
 
   const intuitionContext = buildContext(components);
 
-  const stream = anthropic.messages.stream({
+  const response = await anthropic.messages.create({
     model: "claude-opus-4-6",
-    max_tokens: 2048,
+    max_tokens: 4096,
     system: SYSTEM_PROMPT,
     messages: [
       {
@@ -45,32 +44,20 @@ export async function POST(req: Request) {
     ],
   });
 
-  const encoder = new TextEncoder();
+  const text = response.content[0].type === "text" ? response.content[0].text : "";
 
-  const readable = new ReadableStream({
-    async start(controller) {
-      for await (const event of stream) {
-        if (
-          event.type === "content_block_delta" &&
-          event.delta.type === "text_delta"
-        ) {
-          controller.enqueue(encoder.encode(event.delta.text));
-        }
-      }
-      controller.close();
-    },
-    cancel() {
-      stream.abort();
-    },
-  });
+  // Extract JSON from response
+  const jsonMatch = text.match(/```json\n([\s\S]*?)\n```/) || text.match(/(\{[\s\S]*\})/);
+  if (!jsonMatch) {
+    return Response.json({ error: "No blueprint generated" }, { status: 500 });
+  }
 
-  return new Response(readable, {
-    headers: {
-      "Content-Type": "text/plain; charset=utf-8",
-      "Transfer-Encoding": "chunked",
-      "X-Accel-Buffering": "no",
-    },
-  });
+  try {
+    const blueprint = JSON.parse(jsonMatch[1]);
+    return Response.json(blueprint);
+  } catch {
+    return Response.json({ error: "Invalid blueprint JSON" }, { status: 500 });
+  }
 }
 
 function buildContext(components: RankedComponent[]): string {
@@ -89,12 +76,56 @@ function buildContext(components: RankedComponent[]): string {
 
 const SYSTEM_PROMPT = `You are Wispr, a trust-scored discovery engine for AI agent components.
 
-You receive pre-resolved context from the Intuition knowledge graph: a ranked list of components validated by real practitioners who have staked $TRUST on them.
+You receive pre-resolved context from the Intuition knowledge graph and must return a Blueprint JSON object.
 
-Your role:
-- Recommend a coherent stack based on the user's intent and the Intuition context provided
-- Explain which components to use, in what order, and why
-- Be concrete: mention specific tool names, how they connect, and any important caveats
-- Trust scores are derived from Total Value Locked (TVL) on Intuition — higher means more practitioners vouch for it
+IMPORTANT: Your response must be ONLY a JSON code block, no markdown, no explanation outside the JSON.
 
-Keep your response clear and actionable. If the Intuition context is sparse, say so and give your best recommendation based on general knowledge.`;
+Output this exact structure:
+
+\`\`\`json
+{
+  "id": "kebab-case-id",
+  "title": "Stack title",
+  "intent": "user's original intent",
+  "domains": ["Domain1", "Domain2"],
+  "resolvedIn": "1.2s",
+  "stack": {
+    "id": "same-as-root-id",
+    "components": [
+      {
+        "id": "component-id",
+        "name": "Component Name",
+        "description": "What it does",
+        "url": "https://...",
+        "type": "mcp" | "sdk" | "api" | "model" | "skill",
+        "context": "context-name",
+        "trustScore": 8.5,
+        "curatorCount": 20
+      }
+    ],
+    "flow": "Step 1 → Step 2 → Step 3",
+    "infrastructure": ["optional infra notes"],
+    "customCode": ["optional custom code notes"]
+  },
+  "systemPrompt": "System prompt for the agent",
+  "installCommand": "npm install ...",
+  "mcpConfig": {
+    "mcp-name": { "command": "npx", "args": ["-y", "package-name"] }
+  },
+  "llms": [
+    { "model": "Claude Sonnet 4.5", "provider": "Anthropic", "reasoning": "Why this model" }
+  ]
+}
+\`\`\`
+
+Rules:
+- Use components from the Intuition context if available, otherwise use the Wispear registry
+- trustScore: number 0-10 based on Intuition data (use 8.0 if unknown)
+- curatorCount: number based on Intuition data (use 0 if unknown)
+- type must be one of: mcp, sdk, api, model, skill, package
+- flow uses → arrows between steps
+- Only include mcpConfig for mcp-type components
+
+Wispear Registry v0.1:
+- content-automation: mcp-notion, mcp-twitter, brand-voice-skill, claude-sonnet-4-5
+- defi: chainlink-data-feeds, 1inch-fusion-plus-sdk, privy-embedded-wallet`;

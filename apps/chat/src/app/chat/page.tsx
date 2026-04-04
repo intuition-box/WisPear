@@ -32,7 +32,7 @@ export default function ChatPage() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(false);
 
-  function submit() {
+  async function submit() {
     const text = input.trim();
     if (!text || loading) return;
 
@@ -40,18 +40,25 @@ export default function ChatPage() {
     setMessages((prev) => [...prev, { role: "user", content: text }]);
     setLoading(true);
 
-    // Simulate agent thinking delay
-    setTimeout(() => {
-      const blueprint = matchBlueprint(text);
+    try {
+      const res = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: text }),
+      });
+
+      if (!res.ok) throw new Error(await res.text());
+
+      const blueprint = await res.json();
+      setMessages((prev) => [...prev, { role: "agent", blueprint }]);
+    } catch (err) {
       setMessages((prev) => [
         ...prev,
-        {
-          role: "agent",
-          blueprint,
-        },
+        { role: "agent", content: `Error: ${(err as Error).message}` },
       ]);
+    } finally {
       setLoading(false);
-    }, 1500);
+    }
   }
 
   return (
