@@ -6,7 +6,7 @@ import { Logo, brand } from "@wispr/ui";
 
 const NAV_ITEMS = [
   { href: "/explorer", icon: "🔍", label: "Explorer" },
-  { href: "/battle", icon: "⚔️", label: "Battle" },
+  { href: "/chat", icon: "💬", label: "Chat", external: true },
   { href: "/onboarding", icon: "⚙️", label: "Settings" },
 ];
 
@@ -22,22 +22,47 @@ export function Sidebar() {
 
       {/* Nav */}
       <nav className="flex flex-col gap-0.5 mt-2">
-        {NAV_ITEMS.map((item) => (
-          <Link
-            key={item.href}
-            href={item.href}
-            className={`flex items-center gap-3.5 px-3.5 py-3 rounded-full text-[15px] transition-colors hover:bg-hover ${
-              pathname === item.href
-                ? "font-bold text-text-primary"
-                : "font-medium text-text-secondary"
-            }`}
-          >
-            <span className="w-6 h-6 flex items-center justify-center text-lg shrink-0">
-              {item.icon}
-            </span>
-            <span>{item.label}</span>
-          </Link>
-        ))}
+        {NAV_ITEMS.map((item) => {
+          const isExternal = "external" in item && item.external;
+          const isActive = pathname === item.href;
+          const className = `flex items-center gap-3.5 px-3.5 py-3 rounded-full text-[15px] transition-colors hover:bg-hover ${
+            isActive
+              ? "font-bold text-text-primary"
+              : "font-medium text-text-secondary"
+          }`;
+
+          if (isExternal) {
+            const chatUrl = process.env.NEXT_PUBLIC_CHAT_URL ?? "https://wispear.ai/chat";
+            return (
+              <a
+                key={item.href}
+                href={chatUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={className}
+              >
+                <span className="w-6 h-6 flex items-center justify-center text-lg shrink-0">
+                  {item.icon}
+                </span>
+                <span>{item.label}</span>
+                <span className="ml-auto text-[10px] text-text-muted">↗</span>
+              </a>
+            );
+          }
+
+          return (
+            <Link
+              key={item.href}
+              href={item.href}
+              className={className}
+            >
+              <span className="w-6 h-6 flex items-center justify-center text-lg shrink-0">
+                {item.icon}
+              </span>
+              <span>{item.label}</span>
+            </Link>
+          );
+        })}
       </nav>
 
       <div className="mt-auto" />
