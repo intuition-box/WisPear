@@ -44,7 +44,7 @@ This package contains:
 **Creates only 1 atom** to verify everything works:
 
 ```bash
-pnpm --filter @wispr/ontology seed:test
+bun --filter @wispr/ontology seed:test
 ```
 
 **Expected output:**
@@ -72,7 +72,7 @@ pnpm --filter @wispr/ontology seed:test
    - Atoms created: 1
    - Triples created: 0 (test mode)
 
-🚀 Next step: Run 'pnpm --filter @wispr/ontology seed:full' to create all atoms and triples
+🚀 Next step: Run 'bun --filter @wispr/ontology seed:full' to create all atoms and triples
 ```
 
 ---
@@ -82,7 +82,7 @@ pnpm --filter @wispr/ontology seed:test
 **Creates all 19 atoms + 16 triples:**
 
 ```bash
-pnpm --filter @wispr/ontology seed:full
+bun --filter @wispr/ontology seed:full
 ```
 
 **What it does:**
@@ -178,13 +178,13 @@ The seed script:
 
 ```bash
 # Build TypeScript
-pnpm build
+bun build
 
 # Watch mode
-pnpm dev
+bun dev
 
 # Type check
-pnpm typecheck
+bun typecheck
 ```
 
 ---

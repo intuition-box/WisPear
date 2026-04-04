@@ -8,7 +8,7 @@
  * - Generates a mapping JSON with IPFS URIs
  *
  * Usage:
- *   pnpm --filter @wispr/ontology upload:favicons
+ *   bun --filter @wispr/ontology upload:favicons
  */
 
 import { config } from "dotenv";
@@ -97,7 +97,7 @@ async function main() {
   console.log(`   Total files: ${total}`);
   console.log(`   ✅ Uploaded: ${uploaded}`);
   console.log(`   ❌ Failed: ${failed}`);
-  console.log(`\n✅ Next step: Run 'pnpm seed:test' or 'pnpm seed:full' to create atoms\n`);
+  console.log(`\n✅ Next step: Run 'bun seed:test' or 'bun seed:full' to create atoms\n`);
 }
 
 main().catch((error) => {
