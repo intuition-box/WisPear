@@ -172,17 +172,20 @@ export default function CuratePage() {
                   {item.component.description}
                 </p>
 
-                {/* Context + trust */}
-                <div className="flex items-center justify-between">
-                  {context && (
-                    <span className="text-[11px] font-semibold px-3 py-1 rounded-full bg-accent-soft text-accent border border-accent/20">
+                {/* Context */}
+                {context && (
+                  <div className="flex flex-col gap-1.5">
+                    <span className="text-[10px] font-semibold text-text-muted uppercase tracking-wider">Context</span>
+                    <span className="text-[12px] font-semibold px-3 py-1.5 rounded-full bg-accent-soft text-accent border border-accent/20 self-start">
                       {context.replace(/-/g, " ")}
                     </span>
-                  )}
-                  <div className="flex items-center gap-2">
-                    <span className="text-[11px] font-semibold text-amber">★ {item.trustScore.toFixed(1)}</span>
-                    <span className="text-[10px] text-text-muted">{item.curatorCount} curators</span>
                   </div>
+                )}
+
+                {/* Trust */}
+                <div className="flex items-center gap-2">
+                  <span className="text-[11px] font-semibold text-amber">★ {item.trustScore.toFixed(1)}</span>
+                  <span className="text-[11px] font-medium text-white">{item.curatorCount} curators</span>
                 </div>
 
                 {/* View details */}
