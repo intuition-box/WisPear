@@ -28,9 +28,9 @@ export function SwipeButtons({ onSwipe, onSkip }: SwipeButtonsProps) {
       {onSkip && (
         <button
           onClick={onSkip}
-          className="text-[12px] text-ink-muted hover:text-ink-secondary transition-colors bg-transparent py-1"
+          className="flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-bg-raised border border-line hover:border-line-strong text-[13px] font-medium text-ink-muted hover:text-ink-secondary shadow-xs hover:shadow-sm active:scale-95 transition-all duration-200"
         >
-          Skip (I don't know)
+          Skip — I don't know
         </button>
       )}
     </div>
