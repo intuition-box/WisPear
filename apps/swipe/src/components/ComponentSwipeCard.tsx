@@ -94,7 +94,7 @@ export const ComponentSwipeCard = forwardRef<HTMLDivElement, ComponentSwipeCardP
               className="absolute top-5 right-4 text-[11px] font-black tracking-[0.15em] px-3 py-1.5 rounded-lg border-2 text-green border-green bg-green/10"
               style={{ opacity: likeOpacity, rotate: 12 }}
             >
-              USEFUL
+              AGREE
             </motion.span>
 
             <motion.div
@@ -105,7 +105,7 @@ export const ComponentSwipeCard = forwardRef<HTMLDivElement, ComponentSwipeCardP
               className="absolute top-5 left-4 text-[11px] font-black tracking-[0.15em] px-3 py-1.5 rounded-lg border-2 text-red border-red bg-red/10"
               style={{ opacity: dislikeOpacity, rotate: -12 }}
             >
-              SKIP
+              DISAGREE
             </motion.span>
           </motion.div>
         )}

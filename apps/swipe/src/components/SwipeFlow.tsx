@@ -109,7 +109,7 @@ export default function SwipeFlow() {
                 className="w-full"
               >
                 <div className="text-[11px] text-green font-bold tracking-[0.1em] uppercase mb-2.5 px-1">
-                  Useful ({forVotes.length})
+                  Agree ({forVotes.length})
                 </div>
                 <div className="bg-card rounded-2xl border border-line overflow-hidden divide-y divide-line">
                   {forVotes.map((vote) => (
@@ -139,7 +139,7 @@ export default function SwipeFlow() {
                 className="w-full"
               >
                 <div className="text-[11px] text-ink-muted font-bold tracking-[0.1em] uppercase mb-2.5 px-1">
-                  Skipped ({againstVotes.length})
+                  Disagree ({againstVotes.length})
                 </div>
                 <div className="bg-card/50 rounded-2xl border border-line/50 overflow-hidden divide-y divide-line/50">
                   {againstVotes.map((vote) => (
@@ -281,12 +281,12 @@ export default function SwipeFlow() {
               )}
             </AnimatePresence>
           </div>
-          <SwipeButtons onSwipe={voting.swipe} />
+          <SwipeButtons onSwipe={voting.swipe} onSkip={voting.skip} />
         </div>
 
         <div className="text-center pb-8">
           <span className="text-[11px] text-ink-muted/50 tracking-wide">
-            ← skip · useful →
+            ← disagree · agree →
           </span>
         </div>
       </div>
@@ -393,7 +393,7 @@ export default function SwipeFlow() {
                         onClick={() => setShowComponents(true)}
                         className="w-full max-w-[320px] flex items-center justify-center gap-2.5 bg-pear hover:bg-pear-hover text-ink-inverse font-bold text-[15px] py-4 rounded-2xl shadow-glow transition-all duration-300 hover:-translate-y-0.5 active:translate-y-0 animate-glow-pulse"
                       >
-                        Discover your tools →
+                        Share your wisdom →
                       </button>
                     </motion.div>
                   )}
