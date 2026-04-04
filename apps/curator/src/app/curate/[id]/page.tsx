@@ -4,7 +4,11 @@ import { useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@wispr/ui";
+import { useWalletConnection } from "@wispr/wallet";
 import { getAtom, ATOMS } from "@/data/atoms";
+import { getTermId } from "@/lib/termIds";
+import { StakeModal } from "@/components/StakeModal";
+import { useStakingHistory } from "@/hooks/useStakingHistory";
 
 const TRENDING = Object.values(ATOMS).slice(0, 5).map((a, i) => ({
   name: a.name,
@@ -26,7 +30,12 @@ export default function AtomDetailPage() {
   const atomId = params.id as string;
   const atom = getAtom(atomId);
 
+  const { wallet, isConnected, connect } = useWalletConnection();
+  const termId = getTermId(atomId);
+  const { events: stakingEvents, loading: historyLoading } = useStakingHistory(termId);
+
   const [showShare, setShowShare] = useState(false);
+  const [showStake, setShowStake] = useState(false);
   const [copied, setCopied] = useState(false);
 
   const shareUrl = typeof window !== "undefined" ? window.location.href : "";
@@ -144,6 +153,13 @@ export default function AtomDetailPage() {
             <Button
               variant="primary"
               size="lg"
+              onClick={() => {
+                if (!isConnected) {
+                  connect();
+                } else {
+                  setShowStake(true);
+                }
+              }}
               style={{
                 flex: 1,
                 borderRadius: "12px",
@@ -156,7 +172,7 @@ export default function AtomDetailPage() {
                 transition: "all 0.3s ease",
               }}
             >
-              Stake $TRUST
+              {!isConnected ? "Connect Wallet" : "Stake $TRUST"}
             </Button>
             <Button
               variant="ghost"
@@ -215,16 +231,21 @@ export default function AtomDetailPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {[
-                    { curator: "vitalik.eth", action: "Stake", amount: "340", tx: "0x8f2a...c41d", time: "2h ago" },
-                    { curator: "aave-whale.eth", action: "Stake", amount: "280", tx: "0x1b7e...9a23", time: "5h ago" },
-                    { curator: "defi-chad.eth", action: "Stake", amount: "150", tx: "0xd4c1...3f88", time: "8h ago" },
-                    { curator: "sam.eth", action: "Stake", amount: "120", tx: "0xa9f3...7b12", time: "1d ago" },
-                    { curator: "0xbuilder.eth", action: "Stake", amount: "95", tx: "0x5e82...d4a7", time: "1d ago" },
-                    { curator: "lens-dev.eth", action: "Unstake", amount: "60", tx: "0x7c19...e5f0", time: "2d ago" },
-                    { curator: "anon-whale.eth", action: "Stake", amount: "200", tx: "0x3a6d...1c9e", time: "2d ago" },
-                    { curator: "mcp-maxi.eth", action: "Stake", amount: "175", tx: "0xb8f4...a2d6", time: "3d ago" },
-                  ].map((row, i) => (
+                  {historyLoading && (
+                    <tr>
+                      <td colSpan={5} className="px-4 py-8 text-center">
+                        <div className="w-5 h-5 border-2 border-pear/30 border-t-pear rounded-full animate-spin mx-auto" />
+                      </td>
+                    </tr>
+                  )}
+                  {!historyLoading && stakingEvents.length === 0 && (
+                    <tr>
+                      <td colSpan={5} className="px-4 py-8 text-center text-text-muted text-[13px]">
+                        No staking activity yet
+                      </td>
+                    </tr>
+                  )}
+                  {!historyLoading && stakingEvents.map((row, i) => (
                     <tr key={i} className="border-b border-border/50 last:border-none hover:bg-hover/50 transition-colors">
                       <td className="px-4 py-2.5 text-text-primary font-medium">{row.curator}</td>
                       <td className="px-4 py-2.5">
@@ -236,7 +257,7 @@ export default function AtomDetailPage() {
                       </td>
                       <td className="px-4 py-2.5 text-right text-pear font-semibold">{row.amount} $T</td>
                       <td className="px-4 py-2.5 text-right">
-                        <a href={`https://explorer.intuition.systems/tx/${row.tx}`} target="_blank" rel="noopener noreferrer" className="text-accent hover:text-pear transition-colors font-mono text-[12px]">
+                        <a href={`https://explorer.intuition.systems/address/${row.txFull}`} target="_blank" rel="noopener noreferrer" className="text-accent hover:text-pear transition-colors font-mono text-[12px]">
                           {row.tx}
                         </a>
                       </td>
@@ -299,6 +320,16 @@ export default function AtomDetailPage() {
           </div>
         </aside>
       </div>
+
+      {/* Stake Modal */}
+      {showStake && wallet && termId && (
+        <StakeModal
+          wallet={wallet}
+          termId={termId}
+          atomName={atom.name}
+          onClose={() => setShowStake(false)}
+        />
+      )}
 
       {/* Share Modal */}
       {showShare && (
