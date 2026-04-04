@@ -1,5 +1,5 @@
 
-import { useReducer, useMemo } from "react";
+import { useReducer, useMemo, useEffect } from "react";
 import type { Profile } from "@wispr/ontology";
 import type { SwipeState, SwipeDirection } from "@/types/swipe";
 import {
@@ -13,7 +13,13 @@ import {
 
 type Action = { type: "SWIPE"; direction: SwipeDirection } | { type: "RESET" };
 
+const STORAGE_KEY = "wispr-swipe-state";
+
 function createInitialState(): SwipeState {
+  try {
+    const saved = sessionStorage.getItem(STORAGE_KEY);
+    if (saved) return JSON.parse(saved);
+  } catch {}
   const tree = loadTree();
   return {
     phase: "role",
@@ -89,6 +95,10 @@ export function useSwipeEngine() {
   const [state, dispatch] = useReducer(reducer, undefined, createInitialState);
   const tree = useMemo(() => loadTree(), []);
 
+  useEffect(() => {
+    sessionStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  }, [state]);
+
   const currentQuestion =
     state.phase !== "result"
       ? getQuestion(tree, state.currentQuestionId)
@@ -111,6 +121,9 @@ export function useSwipeEngine() {
     progress,
     swipe: (direction: SwipeDirection) =>
       dispatch({ type: "SWIPE", direction }),
-    reset: () => dispatch({ type: "RESET" }),
+    reset: () => {
+      sessionStorage.removeItem(STORAGE_KEY);
+      dispatch({ type: "RESET" });
+    },
   };
 }
