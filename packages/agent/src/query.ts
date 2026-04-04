@@ -1,44 +1,33 @@
+import type { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { searchAtoms, searchLists, type Atom } from "./intuition/tools.js";
 import type { SemanticClaims } from "./types/semantic-claims.js";
 import type { RankedComponent } from "./types/ranked-component.js";
 import type { Component, ComponentType } from "@wispr/ontology";
 
-// query — fetch relevant components from Intuition knowledge graph
-export async function query(claims: SemanticClaims): Promise<RankedComponent[]> {
-  const searchTerms = buildSearchTerms(claims);
+// Sequential calls — Intuition MCP server rejects concurrent connections
+export async function query(client: Client, claims: SemanticClaims): Promise<RankedComponent[]> {
+  const atoms = await searchAtoms(client, buildSearchTerms(claims));
 
-  const [atoms, listResults] = await Promise.all([
-    searchAtoms(searchTerms),
-    Promise.all(buildListQueries(claims).map(searchLists)).then((r) => r.flat()),
-  ]);
+  const listQueries = buildListQueries(claims);
+  const listResults: Atom[] = [];
+  for (const q of listQueries) {
+    const results = await searchLists(client, q);
+    listResults.push(...results);
+  }
 
   const deduplicated = dedup([...atoms, ...listResults]);
-
   return deduplicated.map((atom, index) => atomToRankedComponent(atom, index, deduplicated.length));
 }
 
 function buildSearchTerms(claims: SemanticClaims): string[] {
-  return [
-    ...claims.frameworks,
-    ...claims.features,
-    ...claims.domains,
-    claims.raw,
-  ].filter(Boolean);
+  return [...claims.frameworks, ...claims.features, ...claims.domains, claims.raw].filter(Boolean);
 }
 
 function buildListQueries(claims: SemanticClaims): string[] {
   const queries: string[] = [];
-
-  if (claims.frameworks.length > 0) {
-    queries.push(`${claims.frameworks.join(" ")} tools`);
-  }
-  if (claims.features.length > 0) {
-    queries.push(`${claims.features.join(" ")} mcp servers`);
-  }
-  if (queries.length === 0) {
-    queries.push(claims.raw);
-  }
-
+  if (claims.frameworks.length > 0) queries.push(`${claims.frameworks.join(" ")} tools`);
+  if (claims.features.length > 0) queries.push(`${claims.features.join(" ")} mcp servers`);
+  if (queries.length === 0) queries.push(claims.raw);
   return queries;
 }
 
@@ -51,13 +40,7 @@ function dedup(atoms: Atom[]): Atom[] {
   });
 }
 
-function atomToRankedComponent(
-  atom: Atom,
-  index: number,
-  total: number
-): RankedComponent {
-  // Trust score derived from position in Intuition results (TVL-ranked)
-  // Position 0 = highest TVL → score 1.0, last position → score approaches 0
+function atomToRankedComponent(atom: Atom, index: number, total: number): RankedComponent {
   const trustScore = total > 1 ? 1 - index / (total - 1) : 1;
 
   const component: Component = {
@@ -78,7 +61,7 @@ function atomToRankedComponent(
   return {
     component,
     trustScore: Math.round(trustScore * 100) / 100,
-    curatorCount: 0, // enriched downstream from Intuition stake data
+    curatorCount: 0,
     reasoning: atom.description ?? `Matched from Intuition knowledge graph`,
   };
 }

@@ -1,7 +1,5 @@
-// /swipe → onboarding
-// /chat  → intent input
-// /blueprint → generated blueprint
+import { redirect } from "next/navigation";
 
 export default function Home() {
-  return <main>Wispr Chat — TODO</main>;
+  redirect("/chat");
 }

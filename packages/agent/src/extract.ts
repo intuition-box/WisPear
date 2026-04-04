@@ -1,9 +1,9 @@
+import type { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { extractTriples, type Triple } from "./intuition/tools.js";
 import type { SemanticClaims } from "./types/semantic-claims.js";
 
-// extract — parse user intent into semantic claims via Intuition extract_triples
-export async function extract(intent: string): Promise<SemanticClaims> {
-  const triples = await extractTriples(intent);
+export async function extract(client: Client, intent: string): Promise<SemanticClaims> {
+  const triples = await extractTriples(client, intent);
 
   return {
     frameworks: collectObjects(triples, "uses-framework"),
