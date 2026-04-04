@@ -2,6 +2,7 @@
 
 import { useWalletConnection } from "@/hooks/useWalletConnection";
 import { useBalance, intuitionChain } from "@wispr/wallet";
+import { QRCodeSVG } from "qrcode.react";
 
 export function WalletConnect() {
   const { address, isConnected, loading, error, connect, disconnect } =
@@ -70,6 +71,19 @@ export function WalletConnect() {
       <div className="flex items-center gap-2">
         <span className="text-[18px] font-bold text-ink">{formattedBalance}</span>
       </div>
+      {balance && parseFloat(balance.formatted) === 0 && address && (
+        <div className="flex flex-col items-center gap-3 pt-2">
+          <p className="text-[12px] text-ink-muted text-center">
+            Send TRUST to this address to get started
+          </p>
+          <div className="bg-white rounded-xl p-3">
+            <QRCodeSVG value={address} size={160} />
+          </div>
+          <span className="text-[11px] text-ink-muted font-mono break-all text-center px-2">
+            {address}
+          </span>
+        </div>
+      )}
     </div>
   );
 }
