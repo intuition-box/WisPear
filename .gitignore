@@ -6,3 +6,6 @@ dist/
 *.env
 .claude/
 pnpm-lock.yaml
+*.tsbuildinfo
+storybook-static/
+next-env.d.ts
