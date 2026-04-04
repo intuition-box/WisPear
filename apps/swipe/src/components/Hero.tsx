@@ -21,11 +21,18 @@ export function Hero({ onStart }: HeroProps) {
           </span>
         </div>
 
-        <div className="animate-fade-up mb-5" style={{ animationDelay: '60ms' }}>
-          <Logo variant="wordmark" theme="dark" width={200} height={38} />
+        {/* Pear icon + wordmark */}
+        <div className="animate-fade-up flex items-center gap-3 mb-5" style={{ animationDelay: '60ms' }}>
+          <Logo variant="icon" theme="dark" width={48} height={53} />
+          <Logo variant="wordmark" theme="dark" width={180} height={34} />
         </div>
 
-        <h1 className="animate-fade-up" style={{ animationDelay: '120ms' }}>
+        {/* Slogan */}
+        <p className="animate-fade-up text-[13px] text-ink-muted italic tracking-wide mb-6" style={{ animationDelay: '100ms' }}>
+          Collective wisdom, whispered to your agent.
+        </p>
+
+        <h1 className="animate-fade-up" style={{ animationDelay: '140ms' }}>
           <span className="block font-display text-[40px] leading-[1.05] text-ink tracking-[-0.02em] font-bold">
             Discover your
           </span>
@@ -34,11 +41,11 @@ export function Hero({ onStart }: HeroProps) {
           </span>
         </h1>
 
-        <p className="animate-fade-up text-[15px] text-ink-secondary leading-[1.6] max-w-[280px] mt-5 mb-8" style={{ animationDelay: '200ms' }}>
+        <p className="animate-fade-up text-[15px] text-ink-secondary leading-[1.6] max-w-[280px] mt-5 mb-8" style={{ animationDelay: '220ms' }}>
           8 questions. 60 seconds. Uncover your role and AI maturity level, then mint it on-chain.
         </p>
 
-        <div className="animate-fade-up" style={{ animationDelay: '280ms' }}>
+        <div className="animate-fade-up" style={{ animationDelay: '300ms' }}>
           <button
             onClick={onStart}
             className="group flex items-center gap-2 bg-pear text-ink-inverse font-semibold text-[14px] pl-6 pr-5 py-3.5 rounded-2xl shadow-glow hover:shadow-lg transition-all duration-300 hover:-translate-y-0.5 active:translate-y-0 active:shadow-sm animate-glow-pulse"
@@ -50,7 +57,7 @@ export function Hero({ onStart }: HeroProps) {
       </div>
 
       {/* Pear logo watermark */}
-      <div className="absolute right-[-20px] bottom-[20px] opacity-10 pointer-events-none">
+      <div className="absolute right-[-20px] bottom-[20px] opacity-15 pointer-events-none">
         <Logo variant="icon" theme="dark" width={200} height={220} />
       </div>
 
