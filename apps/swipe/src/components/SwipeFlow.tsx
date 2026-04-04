@@ -261,8 +261,13 @@ export default function SwipeFlow() {
   if (showComponents && profile) {
     return (
       <div className="flex flex-col min-h-screen bg-bg">
+        {/* Top bar with logo */}
+        <div className="px-5 pt-5">
+          <Logo variant="icon" theme="dark" width={28} height={31} />
+        </div>
+
         {/* Context header */}
-        <div className="flex flex-col items-center gap-5 px-7 pt-14 pb-4">
+        <div className="flex flex-col items-center gap-5 px-7 pt-4 pb-4">
           <motion.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
