@@ -138,18 +138,21 @@ export default function SwipeFlow() {
                 transition={{ delay: 0.25 }}
                 className="w-full"
               >
-                <div className="text-[11px] text-ink-muted font-bold tracking-[0.1em] uppercase mb-2.5 px-1">
+                <div className="text-[11px] text-red font-bold tracking-[0.1em] uppercase mb-2.5 px-1">
                   Disagree ({againstVotes.length})
                 </div>
-                <div className="bg-card/50 rounded-2xl border border-line/50 overflow-hidden divide-y divide-line/50">
+                <div className="bg-card/50 rounded-2xl border border-red/10 overflow-hidden divide-y divide-line/50">
                   {againstVotes.map((vote) => (
                     <div
                       key={vote.component.id}
-                      className="flex items-center gap-3 px-4 py-2.5 opacity-50"
+                      className="flex items-center gap-3 px-4 py-3"
                     >
-                      <span className="text-[14px] leading-none">{vote.component.typeEmoji}</span>
-                      <span className="text-[12px] text-ink-secondary flex-1">
+                      <span className="text-[16px] leading-none">{vote.component.typeEmoji}</span>
+                      <span className="text-[13px] text-ink font-medium flex-1">
                         {vote.component.name}
+                      </span>
+                      <span className="text-[10px] font-bold tracking-wider text-red bg-red/10 px-2 py-0.5 rounded-md">
+                        ✕
                       </span>
                     </div>
                   ))}
