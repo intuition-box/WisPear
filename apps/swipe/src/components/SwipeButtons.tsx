@@ -7,7 +7,7 @@ interface SwipeButtonsProps {
 
 export function SwipeButtons({ onSwipe }: SwipeButtonsProps) {
   return (
-    <div className="flex gap-8 justify-center mt-4">
+    <div className="flex gap-14 justify-center mt-4">
       <div className="flex flex-col items-center gap-2">
         <span className="text-[11px] text-ink-muted tracking-wide">Disagree</span>
         <button
