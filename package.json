@@ -2,7 +2,11 @@
   "name": "wispr",
   "private": true,
   "version": "0.0.1",
-  "packageManager": "pnpm@9.0.0",
+  "packageManager": "bun@1.2.18",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
   "scripts": {
     "build": "turbo run build",
     "dev": "turbo run dev",
@@ -10,10 +14,8 @@
     "typecheck": "turbo run typecheck",
     "clean": "turbo run clean"
   },
-  "pnpm": {
-    "overrides": {
-      "esbuild": "0.25.12"
-    }
+  "overrides": {
+    "esbuild": "0.25.12"
   },
   "dependencies": {
     "lucide-react": "^1.7.0"

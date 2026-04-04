@@ -8,7 +8,7 @@
  * - Downloads favicons to packages/ontology/favicons/
  *
  * Usage:
- *   pnpm --filter @wispr/ontology download:favicons
+ *   bun --filter @wispr/ontology download:favicons
  */
 
 import { readFileSync, writeFileSync, mkdirSync, existsSync } from "fs";
@@ -135,7 +135,7 @@ async function main() {
   console.log(`   Total components: ${total}`);
   console.log(`   ✅ Downloaded: ${downloaded}`);
   console.log(`   ⚠️  Skipped: ${skipped}`);
-  console.log(`\n✅ Next step: Run 'pnpm upload:favicons' to upload to Pinata IPFS\n`);
+  console.log(`\n✅ Next step: Run 'bun upload:favicons' to upload to Pinata IPFS\n`);
 }
 
 main().catch((error) => {

@@ -5,7 +5,7 @@
  * Creates atoms and triples on Intuition Protocol using the MultiVault contract.
  *
  * Usage:
- *   pnpm --filter @wispr/ontology seed:intuition
+ *   bun --filter @wispr/ontology seed:intuition
  *
  * Requirements:
  *   - PRIVATE_KEY in .env file
@@ -75,7 +75,7 @@ let ipfsMapping: Record<string, string> = {};
 try {
   ipfsMapping = JSON.parse(readFileSync(IPFS_MAPPING_PATH, "utf-8"));
 } catch {
-  console.warn("⚠️  No IPFS mapping found. Run 'pnpm download:favicons' and 'pnpm upload:favicons' first.");
+  console.warn("⚠️  No IPFS mapping found. Run 'bun download:favicons' and 'bun upload:favicons' first.");
 }
 
 // Helper: Extract the correct domain for the favicon based on component name and URL
@@ -700,7 +700,7 @@ async function main() {
   console.log("\n✅ Next steps:");
   console.log("   1. Verify atoms on https://portal.intuition.systems");
   if (isTestMode) {
-    console.log("   2. Run 'pnpm seed:full' to create complete ontology\n");
+    console.log("   2. Run 'bun seed:full' to create complete ontology\n");
   } else {
     console.log("   2. Test MCP search_atoms to verify discovery");
     console.log("   3. Test Wispear chatbot blueprint generation\n");
