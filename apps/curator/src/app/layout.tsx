@@ -16,14 +16,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <WalletProvider>
           <div className="flex min-h-screen">
             <Sidebar />
             <main className="flex-1 min-w-0">
               {children}
             </main>
           </div>
-        </WalletProvider>
       </body>
     </html>
   );

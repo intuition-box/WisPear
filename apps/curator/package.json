@@ -10,6 +10,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@wispr/feedback-api": "workspace:*",
     "@wispr/ontology": "workspace:*",
     "@wispr/ui": "workspace:*",
     "@wispr/wallet": "workspace:*",
