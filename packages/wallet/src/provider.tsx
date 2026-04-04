@@ -6,6 +6,32 @@ import {
   DynamicWidget,
 } from "@dynamic-labs/sdk-react-core";
 import { EthereumWalletConnectors } from "@dynamic-labs/ethereum";
+import { DynamicWagmiConnector } from "@dynamic-labs/wagmi-connector";
+import { WagmiProvider } from "wagmi";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+
+import { wagmiConfig } from "./wagmi";
+import { intuitionChain } from "./config";
+
+const queryClient = new QueryClient();
+
+const dynamicEvmNetworks = [
+  {
+    chainId: intuitionChain.id,
+    networkId: intuitionChain.id,
+    name: intuitionChain.name,
+    vanityName: "Intuition",
+    shortName: "intuition",
+    chainName: intuitionChain.name,
+    rpcUrls: intuitionChain.rpcUrls.default.http.slice(),
+    blockExplorerUrls: [intuitionChain.blockExplorers?.default?.url].filter(
+      Boolean,
+    ) as string[],
+    nativeCurrency: intuitionChain.nativeCurrency,
+    testnet: false,
+    iconUrls: [],
+  },
+];
 
 interface WalletProviderProps {
   children: ReactNode;
@@ -20,9 +46,14 @@ export function WalletProvider({ children, environmentId }: WalletProviderProps)
       settings={{
         environmentId: envId,
         walletConnectors: [EthereumWalletConnectors],
+        overrides: { evmNetworks: dynamicEvmNetworks },
       }}
     >
-      {children}
+      <WagmiProvider config={wagmiConfig}>
+        <QueryClientProvider client={queryClient}>
+          <DynamicWagmiConnector>{children}</DynamicWagmiConnector>
+        </QueryClientProvider>
+      </WagmiProvider>
     </DynamicContextProvider>
   );
 }
