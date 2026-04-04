@@ -3,8 +3,8 @@
   "description": "Minimal ontology foundation for 2 use cases: W4 (Notion to Twitter) + P3 (DeFi Rebalancing)",
   "use_cases": ["w4-notion-to-twitter", "p3-defi-rebalancing"],
   "stats": {
-    "totalAtoms": 16,
-    "totalTriples": 26
+    "totalAtoms": 24,
+    "totalTriples": 20
   },
   "atoms": [
     {
@@ -93,80 +93,163 @@
       "id": "content-creation",
       "name": "content-creation",
       "description": "Content creation and writing"
+    },
+    {
+      "id": "productivity",
+      "name": "productivity",
+      "description": "Productivity and workflow automation tools"
+    },
+    {
+      "id": "communication",
+      "name": "communication",
+      "description": "Communication and social platforms"
+    },
+    {
+      "id": "creativity",
+      "name": "creativity",
+      "description": "Creative content generation and writing"
+    },
+    {
+      "id": "finance",
+      "name": "finance",
+      "description": "Financial services and DeFi protocols"
+    },
+    {
+      "id": "infrastructure",
+      "name": "infrastructure",
+      "description": "Web3 infrastructure and development tools"
+    },
+    {
+      "id": "is-best-of",
+      "name": "is-best-of",
+      "description": "Predicate: Indicates component type classification"
+    },
+    {
+      "id": "in-context-of",
+      "name": "in-context-of",
+      "description": "Predicate: Indicates usage context for a component"
+    },
+    {
+      "id": "belongs-to",
+      "name": "belongs-to",
+      "description": "Predicate: Indicates category membership"
     }
   ],
-  "triples": [
-    {
-      "subject": "mcp-notion",
-      "predicate": "is-best-of",
-      "object": "tool"
-    },
-    {
-      "subject": "mcp-twitter",
-      "predicate": "is-best-of",
-      "object": "tool"
-    },
-    {
-      "subject": "claude-sonnet-4-5",
-      "predicate": "is-best-of",
-      "object": "model"
-    },
-    {
-      "subject": "chainlink-data-feeds",
-      "predicate": "is-best-of",
-      "object": "tool"
-    },
-    {
-      "subject": "1inch-fusion-plus-sdk",
-      "predicate": "is-best-of",
-      "object": "tool"
-    },
-    {
-      "subject": "privy-embedded-wallet",
-      "predicate": "is-best-of",
-      "object": "tool"
-    },
-    {
-      "subject": "brand-voice-skill",
-      "predicate": "is-best-of",
-      "object": "skill"
-    },
-    {
-      "subject": "mcp-notion",
-      "predicate": "in-context-of",
-      "object": "content-automation"
-    },
-    {
-      "subject": "mcp-twitter",
-      "predicate": "in-context-of",
-      "object": "social-media"
-    },
-    {
-      "subject": "claude-sonnet-4-5",
-      "predicate": "in-context-of",
-      "object": "content-generation"
-    },
-    {
-      "subject": "chainlink-data-feeds",
-      "predicate": "in-context-of",
-      "object": "defi"
-    },
-    {
-      "subject": "1inch-fusion-plus-sdk",
-      "predicate": "in-context-of",
-      "object": "defi"
-    },
-    {
-      "subject": "privy-embedded-wallet",
-      "predicate": "in-context-of",
-      "object": "web3-building"
-    },
-    {
-      "subject": "brand-voice-skill",
-      "predicate": "in-context-of",
-      "object": "content-creation"
-    }
-  ],
+  "triples": {
+    "base_triples": [
+      {
+        "id": "T1-mcp-notion",
+        "subject": "mcp-notion",
+        "predicate": "is-best-of",
+        "object": "tool"
+      },
+      {
+        "id": "T1-mcp-twitter",
+        "subject": "mcp-twitter",
+        "predicate": "is-best-of",
+        "object": "tool"
+      },
+      {
+        "id": "T1-claude-sonnet",
+        "subject": "claude-sonnet-4-5",
+        "predicate": "is-best-of",
+        "object": "model"
+      },
+      {
+        "id": "T1-chainlink",
+        "subject": "chainlink-data-feeds",
+        "predicate": "is-best-of",
+        "object": "tool"
+      },
+      {
+        "id": "T1-1inch",
+        "subject": "1inch-fusion-plus-sdk",
+        "predicate": "is-best-of",
+        "object": "tool"
+      },
+      {
+        "id": "T1-privy",
+        "subject": "privy-embedded-wallet",
+        "predicate": "is-best-of",
+        "object": "tool"
+      },
+      {
+        "id": "T1-brand-voice",
+        "subject": "brand-voice-skill",
+        "predicate": "is-best-of",
+        "object": "skill"
+      }
+    ],
+    "nested_triples": [
+      {
+        "subject_triple": "T1-mcp-notion",
+        "predicate": "in-context-of",
+        "object": "content-automation"
+      },
+      {
+        "subject_triple": "T1-mcp-twitter",
+        "predicate": "in-context-of",
+        "object": "social-media"
+      },
+      {
+        "subject_triple": "T1-claude-sonnet",
+        "predicate": "in-context-of",
+        "object": "content-generation"
+      },
+      {
+        "subject_triple": "T1-chainlink",
+        "predicate": "in-context-of",
+        "object": "defi"
+      },
+      {
+        "subject_triple": "T1-1inch",
+        "predicate": "in-context-of",
+        "object": "defi"
+      },
+      {
+        "subject_triple": "T1-privy",
+        "predicate": "in-context-of",
+        "object": "web3-building"
+      },
+      {
+        "subject_triple": "T1-brand-voice",
+        "predicate": "in-context-of",
+        "object": "content-creation"
+      }
+    ],
+    "category_triples": [
+      {
+        "subject": "content-automation",
+        "predicate": "belongs-to",
+        "object": "productivity"
+      },
+      {
+        "subject": "social-media",
+        "predicate": "belongs-to",
+        "object": "communication"
+      },
+      {
+        "subject": "content-generation",
+        "predicate": "belongs-to",
+        "object": "creativity"
+      },
+      {
+        "subject": "content-creation",
+        "predicate": "belongs-to",
+        "object": "creativity"
+      },
+      {
+        "subject": "defi",
+        "predicate": "belongs-to",
+        "object": "finance"
+      },
+      {
+        "subject": "web3-building",
+        "predicate": "belongs-to",
+        "object": "infrastructure"
+      }
+    ]
+  },
 
   "use_case_stacks": {
     "w4-notion-to-twitter": {

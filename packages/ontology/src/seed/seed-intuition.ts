@@ -41,9 +41,12 @@ const MULTIVAULT_ABI = [
   "function getTripleCost() view returns (uint256)",
   "function calculateAtomId(bytes data) pure returns (bytes32)",
   "function isTermCreated(bytes32 id) view returns (bool)",
-  "function createAtoms(bytes[] atomDatas, uint256[] assets) payable returns (bytes32[])",
-  "function createTriples(bytes32[] subjectIds, bytes32[] predicateIds, bytes32[] objectIds, uint256[] assets) payable returns (bytes32[])",
+  "function createAtoms(address receiver, bytes[] data, uint256[] assets, uint256 curveId) payable returns (bytes32[])",
+  "function createTriples(address receiver, bytes32[] subjectIds, bytes32[] predicateIds, bytes32[] objectIds, uint256[] assets, uint256 curveId) payable returns (bytes32[])",
 ];
+
+// Curve ID: 1 = Linear bonding curve
+const CURVE_ID = 1n;
 
 // Atom definition
 interface AtomData {
@@ -377,9 +380,13 @@ async function main() {
       console.log(`💸 Cost: ${ethers.formatEther(totalCost)} TRUST`);
 
       try {
-        const tx = await contract.createAtoms(atomDatas, assets, {
-          value: totalCost,
-        });
+        const tx = await contract.createAtoms(
+          wallet.address,  // receiver
+          atomDatas,       // data
+          assets,          // assets
+          CURVE_ID,        // curveId (1 = linear)
+          { value: totalCost }
+        );
 
         console.log(`📤 Tx submitted: ${tx.hash}`);
 
@@ -433,83 +440,197 @@ async function main() {
     return;
   }
 
-  // Prepare triples from ontology
-  const triples: TripleData[] = ontology.triples.map((triple: any) => {
-    // Find atom labels from ontology
-    const subject = ontology.atoms.find((a: any) => a.id === triple.subject);
-    const object = ontology.atoms.find((a: any) => a.id === triple.object);
+  // === TIER 1: Create base triples (component → is-best-of → type) ===
+  console.log(`\n🔗 TIER 1: Creating base triples (is-best-of)...\n`);
 
-    return {
-      subject: subject?.name || triple.subject,
-      predicate: triple.predicate,
-      object: object?.name || triple.object,
-    };
-  });
+  const baseTriples = ontology.triples.base_triples;
+  const baseTripleIds = new Map<string, string>(); // Maps triple.id → tripleTermId
 
-  console.log(`🔗 Creating ${triples.length} triples...\n`);
+  console.log(`📝 ${baseTriples.length} base triples to create\n`);
 
-  // Create triples in batches of 15
-  const TRIPLE_BATCH_SIZE = 15;
+  // Process base triples
+  const subjectIds: string[] = [];
+  const predicateIds: string[] = [];
+  const objectIds: string[] = [];
+  const assets: bigint[] = [];
+  const tripleMetadata: Array<{ id: string; subject: string; predicate: string; object: string }> = [];
 
-  for (let i = 0; i < triples.length; i += TRIPLE_BATCH_SIZE) {
-    const batch = triples.slice(i, i + TRIPLE_BATCH_SIZE);
-    const batchNum = Math.floor(i / TRIPLE_BATCH_SIZE) + 1;
-    const totalBatches = Math.ceil(triples.length / TRIPLE_BATCH_SIZE);
+  for (const triple of baseTriples) {
+    const subjectId = createdAtomIds.get(triple.subject);
+    const predicateId = createdAtomIds.get(triple.predicate);
+    const objectId = createdAtomIds.get(triple.object);
 
-    console.log(`📦 Triple Batch ${batchNum}/${totalBatches} (${batch.length} triples)`);
-
-    const subjectIds: string[] = [];
-    const predicateIds: string[] = [];
-    const objectIds: string[] = [];
-    const assets: bigint[] = [];
-
-    for (const triple of batch) {
-      const subjectId = createdAtomIds.get(triple.subject);
-      const predicateId = createdAtomIds.get(triple.predicate);
-      const objectId = createdAtomIds.get(triple.object);
-
-      if (!subjectId || !predicateId || !objectId) {
-        console.warn(`⚠️  Skipping triple (missing atoms): ${triple.subject} → ${triple.predicate} → ${triple.object}`);
-        continue;
-      }
-
-      console.log(`   ${triple.subject} → ${triple.predicate} → ${triple.object}`);
-
-      subjectIds.push(subjectId);
-      predicateIds.push(predicateId);
-      objectIds.push(objectId);
-      assets.push(tripleCost);
-    }
-
-    if (subjectIds.length === 0) {
-      console.log(`⚠️  No valid triples in batch ${batchNum}, skipping\n`);
+    if (!subjectId || !predicateId || !objectId) {
+      console.warn(`⚠️  Skipping base triple ${triple.id}: missing atoms`);
       continue;
     }
 
+    console.log(`   ${triple.subject} → ${triple.predicate} → ${triple.object}`);
+
+    subjectIds.push(subjectId);
+    predicateIds.push(predicateId);
+    objectIds.push(objectId);
+    assets.push(tripleCost);
+    tripleMetadata.push({ id: triple.id, subject: triple.subject, predicate: triple.predicate, object: triple.object });
+  }
+
+  if (subjectIds.length > 0) {
     const totalCost = tripleCost * BigInt(subjectIds.length);
-    console.log(`💸 Cost: ${ethers.formatEther(totalCost)} TRUST`);
+    console.log(`\n💸 Cost: ${ethers.formatEther(totalCost)} TRUST`);
 
     try {
-      const tx = await contract.createTriples(subjectIds, predicateIds, objectIds, assets, {
-        value: totalCost,
-      });
+      const tx = await contract.createTriples(
+        wallet.address,
+        subjectIds,
+        predicateIds,
+        objectIds,
+        assets,
+        CURVE_ID,
+        { value: totalCost }
+      );
 
       console.log(`📤 Tx submitted: ${tx.hash}`);
-
       const receipt = await waitForTx(provider, tx.hash);
 
       if (receipt && receipt.status === 1) {
-        console.log(`✅ Triple batch ${batchNum} created successfully!\n`);
+        console.log(`✅ Base triples created successfully!\n`);
+
+        // Calculate and store triple IDs
+        // Triple ID = hash(subjectId, predicateId, objectId)
+        for (let i = 0; i < tripleMetadata.length; i++) {
+          const metadata = tripleMetadata[i];
+          const tripleId = ethers.keccak256(
+            ethers.solidityPacked(
+              ["bytes32", "bytes32", "bytes32"],
+              [subjectIds[i], predicateIds[i], objectIds[i]]
+            )
+          );
+          baseTripleIds.set(metadata.id, tripleId);
+          console.log(`   ${metadata.id}: ${tripleId}`);
+        }
       } else {
-        console.error(`❌ Triple batch ${batchNum} failed!\n`);
+        console.error(`❌ Base triples creation failed!\n`);
       }
     } catch (error) {
-      console.error(`❌ Error creating triple batch ${batchNum}:`, error);
+      console.error(`❌ Error creating base triples:`, error);
     }
 
-    // Delay between batches
-    if (i + TRIPLE_BATCH_SIZE < triples.length) {
-      await delay(2000);
+    await delay(2000);
+  }
+
+  // === TIER 2: Create nested triples (T1 → in-context-of → context) ===
+  console.log(`\n🔗 TIER 2: Creating nested triples (in-context-of)...\n`);
+
+  const nestedTriples = ontology.triples.nested_triples;
+  console.log(`📝 ${nestedTriples.length} nested triples to create\n`);
+
+  const nestedSubjectIds: string[] = [];
+  const nestedPredicateIds: string[] = [];
+  const nestedObjectIds: string[] = [];
+  const nestedAssets: bigint[] = [];
+
+  for (const triple of nestedTriples) {
+    const subjectTripleId = baseTripleIds.get(triple.subject_triple);
+    const predicateId = createdAtomIds.get(triple.predicate);
+    const objectId = createdAtomIds.get(triple.object);
+
+    if (!subjectTripleId || !predicateId || !objectId) {
+      console.warn(`⚠️  Skipping nested triple: ${triple.subject_triple} → ${triple.predicate} → ${triple.object}`);
+      continue;
+    }
+
+    console.log(`   (${triple.subject_triple}) → ${triple.predicate} → ${triple.object}`);
+
+    nestedSubjectIds.push(subjectTripleId);
+    nestedPredicateIds.push(predicateId);
+    nestedObjectIds.push(objectId);
+    nestedAssets.push(tripleCost);
+  }
+
+  if (nestedSubjectIds.length > 0) {
+    const totalCost = tripleCost * BigInt(nestedSubjectIds.length);
+    console.log(`\n💸 Cost: ${ethers.formatEther(totalCost)} TRUST`);
+
+    try {
+      const tx = await contract.createTriples(
+        wallet.address,
+        nestedSubjectIds,
+        nestedPredicateIds,
+        nestedObjectIds,
+        nestedAssets,
+        CURVE_ID,
+        { value: totalCost }
+      );
+
+      console.log(`📤 Tx submitted: ${tx.hash}`);
+      const receipt = await waitForTx(provider, tx.hash);
+
+      if (receipt && receipt.status === 1) {
+        console.log(`✅ Nested triples created successfully!\n`);
+      } else {
+        console.error(`❌ Nested triples creation failed!\n`);
+      }
+    } catch (error) {
+      console.error(`❌ Error creating nested triples:`, error);
+    }
+
+    await delay(2000);
+  }
+
+  // === TIER 3: Create category triples (context → belongs-to → category) ===
+  console.log(`\n🔗 TIER 3: Creating category triples (belongs-to)...\n`);
+
+  const categoryTriples = ontology.triples.category_triples;
+  console.log(`📝 ${categoryTriples.length} category triples to create\n`);
+
+  const categorySubjectIds: string[] = [];
+  const categoryPredicateIds: string[] = [];
+  const categoryObjectIds: string[] = [];
+  const categoryAssets: bigint[] = [];
+
+  for (const triple of categoryTriples) {
+    const subjectId = createdAtomIds.get(triple.subject);
+    const predicateId = createdAtomIds.get(triple.predicate);
+    const objectId = createdAtomIds.get(triple.object);
+
+    if (!subjectId || !predicateId || !objectId) {
+      console.warn(`⚠️  Skipping category triple: ${triple.subject} → ${triple.predicate} → ${triple.object}`);
+      continue;
+    }
+
+    console.log(`   ${triple.subject} → ${triple.predicate} → ${triple.object}`);
+
+    categorySubjectIds.push(subjectId);
+    categoryPredicateIds.push(predicateId);
+    categoryObjectIds.push(objectId);
+    categoryAssets.push(tripleCost);
+  }
+
+  if (categorySubjectIds.length > 0) {
+    const totalCost = tripleCost * BigInt(categorySubjectIds.length);
+    console.log(`\n💸 Cost: ${ethers.formatEther(totalCost)} TRUST`);
+
+    try {
+      const tx = await contract.createTriples(
+        wallet.address,
+        categorySubjectIds,
+        categoryPredicateIds,
+        categoryObjectIds,
+        categoryAssets,
+        CURVE_ID,
+        { value: totalCost }
+      );
+
+      console.log(`📤 Tx submitted: ${tx.hash}`);
+      const receipt = await waitForTx(provider, tx.hash);
+
+      if (receipt && receipt.status === 1) {
+        console.log(`✅ Category triples created successfully!\n`);
+      } else {
+        console.error(`❌ Category triples creation failed!\n`);
+      }
+    } catch (error) {
+      console.error(`❌ Error creating category triples:`, error);
     }
   }
 
