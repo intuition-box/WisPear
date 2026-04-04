@@ -9,7 +9,7 @@ const withPWA = withPWAInit({
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  transpilePackages: ["@wispr/ontology"],
+  transpilePackages: ["@wispr/ontology", "@wispr/wallet"],
   experimental: {
     missingSuspenseWithCSRBailout: false,
   },

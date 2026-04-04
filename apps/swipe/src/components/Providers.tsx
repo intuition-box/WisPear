@@ -1,14 +1,14 @@
 "use client";
 
 import { type ReactNode } from "react";
-import { AppKitProvider } from "./AppKitProvider";
+import { DynamicProvider } from "./DynamicProvider";
 import { InstallBanner } from "./InstallBanner";
 
 export default function Providers({ children }: { children: ReactNode }) {
   return (
-    <AppKitProvider>
+    <DynamicProvider>
       {children}
       <InstallBanner />
-    </AppKitProvider>
+    </DynamicProvider>
   );
 }

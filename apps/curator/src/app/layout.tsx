@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { WalletProvider } from "@wispr/wallet";
 import { Sidebar } from "../components/Sidebar";
 import "../styles/globals.css";
 
@@ -15,12 +16,14 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <div className="flex min-h-screen">
-          <Sidebar />
-          <main className="flex-1 min-w-0">
-            {children}
-          </main>
-        </div>
+        <WalletProvider>
+          <div className="flex min-h-screen">
+            <Sidebar />
+            <main className="flex-1 min-w-0">
+              {children}
+            </main>
+          </div>
+        </WalletProvider>
       </body>
     </html>
   );
