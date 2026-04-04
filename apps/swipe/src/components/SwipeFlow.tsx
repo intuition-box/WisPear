@@ -281,13 +281,17 @@ export default function SwipeFlow() {
               )}
             </AnimatePresence>
           </div>
-          <SwipeButtons onSwipe={voting.swipe} onSkip={voting.skip} />
+          <SwipeButtons onSwipe={voting.swipe} />
         </div>
 
-        <div className="text-center pb-8">
-          <span className="text-[11px] text-ink-muted/50 tracking-wide">
-            ← disagree · agree →
-          </span>
+        {/* Skip — full width bottom */}
+        <div className="px-7 pb-8">
+          <button
+            onClick={voting.skip}
+            className="w-full py-3.5 rounded-2xl bg-bg-raised border border-line hover:border-line-strong text-[14px] font-medium text-ink-muted hover:text-ink-secondary shadow-xs hover:shadow-sm active:scale-[0.98] transition-all duration-200"
+          >
+            Skip — I don't know
+          </button>
         </div>
       </div>
     );
