@@ -17,15 +17,7 @@ import { PublishButton } from "@/components/PublishButton";
 export default function SwipeFlow() {
   const { state, currentQuestion, profile, progress, swipe, reset } =
     useSwipeEngine();
-  const {
-    wallet,
-    address,
-    isConnected,
-    loading: walletLoading,
-    error: walletError,
-    connect,
-    disconnect,
-  } = useWalletConnection();
+  const { wallet, isConnected } = useWalletConnection();
   const {
     state: publishState,
     publish,
@@ -125,15 +117,8 @@ export default function SwipeFlow() {
               {/* Divider */}
               <div className="w-12 h-px bg-line-strong" />
 
-              {/* Wallet + Publish */}
-              <WalletConnect
-                isConnected={isConnected}
-                address={address}
-                loading={walletLoading}
-                error={walletError}
-                onConnect={connect}
-                onDisconnect={disconnect}
-              />
+              {/* Dynamic wallet widget — handles connect/disconnect/display */}
+              <WalletConnect />
 
               {isConnected && wallet && (
                 <PublishButton

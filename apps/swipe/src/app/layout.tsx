@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { AppKitProvider } from "@/components/AppKitProvider";
+import { DynamicProvider } from "@/components/DynamicProvider";
 import "../styles/globals.css";
 
 export const metadata: Metadata = {
@@ -29,11 +29,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <AppKitProvider>
+        <DynamicProvider>
           <main className="min-h-screen flex flex-col">
             {children}
           </main>
-        </AppKitProvider>
+        </DynamicProvider>
       </body>
     </html>
   );
