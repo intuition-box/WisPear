@@ -308,7 +308,7 @@ async function runStdioServer() {
 
 async function runHttpServer() {
   const app = express();
-  const port = parseInt(process.env.PORT || '3001', 10);
+  const port = parseInt(process.env.PORT || '3003', 10);
   app.use(express.json());
 
   // Trust proxy for load balancer

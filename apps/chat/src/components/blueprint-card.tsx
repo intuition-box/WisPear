@@ -5,7 +5,6 @@ import {
   Copy,
   Check,
   Users,
-  MessageSquareWarning,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -154,8 +153,8 @@ export function BlueprintCard({
           size="sm"
           onClick={onImprove}
         >
-          <MessageSquareWarning className="h-3.5 w-3.5" />
-          Improve
+          <Users className="h-3.5 w-3.5" />
+          Curate
         </Button>
       </div>
     </div>

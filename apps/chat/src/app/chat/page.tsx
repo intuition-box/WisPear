@@ -58,11 +58,37 @@ export default function ChatPage() {
   }
 
   function handleImprove(blueprint: Blueprint) {
-    setMessages((prev) => [
-      ...prev,
-      { role: "agent", improveChoice: blueprint },
-    ]);
-    scrollToBottom();
+    const curatorUrl = process.env.NEXT_PUBLIC_CURATOR_URL ?? "http://localhost:3001";
+    const payload = blueprint.stack.components.map((c) => {
+      const baseTripleId = `T1-${c.id}`;
+      return {
+        component: {
+          id: c.id,
+          name: c.name,
+          description: c.description,
+          url: c.url,
+        },
+        baseTriple: {
+          id: baseTripleId,
+          subject: c.id,
+          predicate: "is-best-of",
+          object: c.type,
+          label: `${c.name} is-best-of ${c.type}`,
+        },
+        nestedTriple: c.context
+          ? {
+              subjectTriple: baseTripleId,
+              predicate: "in-context-of",
+              object: c.context,
+              label: `(${c.name} is-best-of ${c.type}) in-context-of ${c.context}`,
+            }
+          : null,
+        trustScore: c.trustScore,
+        curatorCount: c.curatorCount,
+      };
+    });
+    const data = btoa(JSON.stringify(payload));
+    window.open(`${curatorUrl}/curate?blueprint=${data}`, "_blank");
   }
 
   function handleSwapTool(blueprint: Blueprint, componentId: string) {
