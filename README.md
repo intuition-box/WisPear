@@ -14,33 +14,33 @@ Collective wisdom, whispered to your agent.
 ## Development
 
 ```bash
-pnpm install
+bun install
 ```
 
 Run everything:
 
 ```bash
-pnpm dev
+bun dev
 ```
 
 Or run individually:
 
 ```bash
 # Chat app — http://localhost:3000
-pnpm --filter @wispr/chat dev
+bun --filter @wispr/chat dev
 
 # Curator app — http://localhost:3001
-pnpm --filter @wispr/curator dev
+bun --filter @wispr/curator dev
 
 # Swipe app — http://localhost:3002
-pnpm --filter @wispr/swipe dev
+bun --filter @wispr/swipe dev
 
 # UI Storybook — http://localhost:6006
-pnpm --filter @wispr/ui storybook
+bun --filter @wispr/ui storybook
 ```
 
 Build all packages:
 
 ```bash
-pnpm build
+bun build
 ```

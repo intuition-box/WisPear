@@ -15,7 +15,7 @@ export interface MCPConfig {
 }
 
 export interface PackageInstall {
-  manager: "npm" | "pnpm" | "yarn" | "pip" | "cargo";
+  manager: "npm" | "pnpm" | "yarn" | "bun" | "pip" | "cargo";
   command: string;
 }
 
