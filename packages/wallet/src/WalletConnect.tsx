@@ -68,7 +68,7 @@ export function WalletConnect() {
           <p className="text-[12px] text-ink-muted text-center">
             Send TRUST to this address to get started
           </p>
-          <div className="bg-white rounded-xl p-3">
+          <div className="rounded-xl p-4" style={{ backgroundColor: "#ffffff" }}>
             <QRCodeSVG value={address} size={160} />
           </div>
           <span className="text-[11px] text-ink-muted font-mono break-all text-center px-2">
