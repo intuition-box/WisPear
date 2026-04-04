@@ -1,4 +1,4 @@
-import { getIntuitionClient } from "./client.js";
+import type { Client } from "@modelcontextprotocol/sdk/client/index.js";
 
 export interface Triple {
   subject: string;
@@ -13,50 +13,31 @@ export interface Atom {
   url?: string;
 }
 
-// extract_triples — parse natural language into structured triples
-export async function extractTriples(input: string): Promise<Triple[]> {
-  const client = await getIntuitionClient();
+function parseContent(content: unknown): unknown[] {
+  if (!Array.isArray(content)) return [];
+  return (content as { text?: string }[])
+    .map((c) => {
+      try {
+        return c.text ? JSON.parse(c.text) : null;
+      } catch {
+        return null;
+      }
+    })
+    .flat()
+    .filter(Boolean);
+}
+
+export async function extractTriples(client: Client, input: string): Promise<Triple[]> {
   const result = await client.callTool({ name: "extract_triples", arguments: { input } });
-  return (result.content as { text: string }[])
-    .map((c) => {
-      try {
-        return JSON.parse(c.text);
-      } catch {
-        return null;
-      }
-    })
-    .flat()
-    .filter(Boolean) as Triple[];
+  return parseContent(result.content) as Triple[];
 }
 
-// search_atoms — search the knowledge graph by keywords
-export async function searchAtoms(queries: string[]): Promise<Atom[]> {
-  const client = await getIntuitionClient();
+export async function searchAtoms(client: Client, queries: string[]): Promise<Atom[]> {
   const result = await client.callTool({ name: "search_atoms", arguments: { queries } });
-  return (result.content as { text: string }[])
-    .map((c) => {
-      try {
-        return JSON.parse(c.text);
-      } catch {
-        return null;
-      }
-    })
-    .flat()
-    .filter(Boolean) as Atom[];
+  return parseContent(result.content) as Atom[];
 }
 
-// search_lists — search named entity lists (e.g. "mcp servers", "nextjs tools")
-export async function searchLists(query: string): Promise<Atom[]> {
-  const client = await getIntuitionClient();
+export async function searchLists(client: Client, query: string): Promise<Atom[]> {
   const result = await client.callTool({ name: "search_lists", arguments: { query } });
-  return (result.content as { text: string }[])
-    .map((c) => {
-      try {
-        return JSON.parse(c.text);
-      } catch {
-        return null;
-      }
-    })
-    .flat()
-    .filter(Boolean) as Atom[];
+  return parseContent(result.content) as Atom[];
 }

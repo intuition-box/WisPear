@@ -1,5 +1,11 @@
 import Anthropic from "@anthropic-ai/sdk";
-import { extract, query, type RankedComponent } from "@wispr/agent";
+import {
+  extract,
+  query,
+  getIntuitionClient,
+  closeIntuitionClient,
+  type RankedComponent,
+} from "@wispr/agent";
 
 const anthropic = new Anthropic();
 
@@ -10,16 +16,23 @@ export async function POST(req: Request) {
     return Response.json({ error: "message required" }, { status: 400 });
   }
 
-  // 1. Extract semantic claims from intent
-  const claims = await extract(message);
+  let claims, components;
+  try {
+    const client = await getIntuitionClient();
+    claims = await extract(client, message);
+    console.log("[wispr] claims:", JSON.stringify(claims));
 
-  // 2. Query Intuition knowledge graph
-  const components = await query(claims);
+    components = await query(client, claims);
+    console.log("[wispr] components:", components.length);
+  } catch (err) {
+    // Invalidate the client so next request gets a fresh one
+    await closeIntuitionClient();
+    console.error("[wispr] pipeline failed:", err);
+    return Response.json({ error: (err as Error).message }, { status: 500 });
+  }
 
-  // 3. Build context from Intuition results
   const intuitionContext = buildContext(components);
 
-  // 4. Stream Claude response with pre-resolved Intuition context
   const stream = anthropic.messages.stream({
     model: "claude-opus-4-6",
     max_tokens: 2048,
