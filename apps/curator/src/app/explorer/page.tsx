@@ -1,35 +1,29 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { useAtoms, OnChainAtom } from "@/hooks/useAtoms";
 
-// All community sets — all components deployed on-chain (Intuition L3)
-const COMMUNITY_SETS = [
-  { id: "cs-w2", initials: "W2", name: "GitHub PR Auto-Review", role: "Full Stack Web3", level: "Advanced", trust: "1.8k", preview: [
-    { name: "MCP GitHub", atomId: "mcp-github" },
-    { name: "Code Review Skill", atomId: "code-review-skill" },
-    { name: "Claude Sonnet 4.5", atomId: "claude-sonnet-4-5" },
-  ]},
-  { id: "cs-w3", initials: "W3", name: "Daily Job Matcher", role: "Backend Dev", level: "Intermediate", trust: "890", preview: [
-    { name: "Firecrawl MCP", atomId: "firecrawl-mcp" },
-    { name: "Embeddings Matching Skill", atomId: "embeddings-matching-skill" },
-    { name: "MCP Gmail", atomId: "mcp-gmail" },
-    { name: "Claude Haiku 4.5", atomId: "claude-haiku-4-5" },
-  ]},
-  { id: "cs-w4", initials: "W4", name: "Notion → Twitter Pipeline", role: "Content Creator", level: "Intermediate", trust: "1.1k", preview: [
-    { name: "MCP Notion", atomId: "mcp-notion" },
-    { name: "Brand Voice Skill", atomId: "brand-voice-skill" },
-    { name: "MCP Twitter", atomId: "mcp-twitter" },
-    { name: "Claude Sonnet 4.5", atomId: "claude-sonnet-4-5" },
-  ]},
-  { id: "cs-p3", initials: "P3", name: "DeFi Portfolio Rebalancer", role: "DeFi Expert", level: "Expert", trust: "2.1k", preview: [
-    { name: "Chainlink Data Feeds", atomId: "chainlink-data-feeds" },
-    { name: "1inch Fusion+ SDK", atomId: "1inch-fusion-plus-sdk" },
-    { name: "Privy Embedded Wallet", atomId: "privy-embedded-wallet" },
-  ]},
-];
+// Map component type to icon
+function typeIcon(type: string | null): string {
+  switch (type?.toLowerCase()) {
+    case "tool":
+    case "mcp":
+      return "\u{1F50C}"; // 🔌
+    case "skill":
+      return "\u{1F9E0}"; // 🧠
+    case "model":
+      return "\u{1F916}"; // 🤖
+    case "sdk":
+    case "api":
+      return "\u26A1"; // ⚡
+    default:
+      return "\u{1F4E6}"; // 📦
+  }
+}
 
 export default function ExplorerPage() {
   const router = useRouter();
+  const { atoms, loading, error } = useAtoms();
 
   return (
     <>
@@ -37,64 +31,131 @@ export default function ExplorerPage() {
       <div className="sticky top-0 z-10 page-header backdrop-blur-xl px-5 py-5">
         <h1 className="page-title">Explorer</h1>
         <p className="text-sm text-text-secondary mt-1">
-          Community bundles curated by experts
+          Components deployed on-chain — live from Intuition L3
         </p>
       </div>
 
-      {/* Community Sets */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-5">
-        {COMMUNITY_SETS.map((set) => (
-          <div
-            key={set.id}
-            className="bg-bg p-5 flex flex-col gap-3 cursor-pointer group rounded-xl border border-border transition-colors duration-200 hover:border-border-light hover:bg-surface/50"
-          >
-            {/* Header */}
-            <div className="flex items-center gap-3">
-              <div className="w-11 h-11 rounded-full bg-gradient-to-br from-accent/15 to-purple/15 border border-accent/20 flex items-center justify-center text-sm font-bold text-accent shrink-0">
-                {set.initials}
-              </div>
-              <div className="flex-1 min-w-0">
-                <div className="text-[15px] font-bold text-text-primary truncate">
-                  {set.name}
-                </div>
-                <div className="text-xs text-text-secondary mt-0.5">
-                  {set.role} · {set.level}
-                </div>
-              </div>
-              <div className="text-sm font-bold text-amber flex items-center gap-1 shrink-0">
-                <span>★</span> {set.trust}
-              </div>
-            </div>
-
-            {/* Preview chips — clickable to atom detail */}
-            <div className="flex flex-wrap gap-1.5">
-              {set.preview.map((tool) => (
-                <span
-                  key={tool.atomId}
-                  onClick={(e) => { e.stopPropagation(); router.push(`/curate/${tool.atomId}`); }}
-                  className="text-xs px-2.5 py-1 rounded-lg bg-surface-2 border border-border text-text-secondary transition-colors duration-200 hover:border-accent/30 hover:text-text-primary cursor-pointer"
-                >
-                  {tool.name}
-                </span>
-              ))}
-            </div>
-
-            {/* Footer */}
-            <div className="flex items-center justify-between pt-2 border-t border-border/60">
-              <span className="text-xs text-text-muted flex items-center gap-1">
-                <span className="w-1.5 h-1.5 bg-green rounded-full" />
-                All components on-chain
-              </span>
-              <button
-                onClick={(e) => { e.stopPropagation(); router.push(`/curate/${set.preview[0].atomId}`); }}
-                className="text-[12px] font-semibold text-accent hover:text-text-primary bg-transparent transition-colors duration-200"
-              >
-                View details →
-              </button>
-            </div>
+      {/* Loading state */}
+      {loading && (
+        <div className="flex items-center justify-center py-20">
+          <div className="flex flex-col items-center gap-3">
+            <div className="w-8 h-8 border-2 border-accent/30 border-t-accent rounded-full animate-spin" />
+            <span className="text-sm text-text-secondary">
+              Fetching on-chain data…
+            </span>
           </div>
-        ))}
-      </div>
+        </div>
+      )}
+
+      {/* Error state */}
+      {error && (
+        <div className="flex items-center justify-center py-20">
+          <div className="flex flex-col items-center gap-3 text-center px-5">
+            <span className="text-3xl">⚠️</span>
+            <span className="text-sm text-text-secondary">
+              Failed to load on-chain data
+            </span>
+            <span className="text-xs text-text-muted font-mono">{error}</span>
+          </div>
+        </div>
+      )}
+
+      {/* Atoms grid */}
+      {!loading && !error && (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-5">
+          {atoms.map((atom) => (
+            <div
+              key={atom.term_id}
+              onClick={() => {
+                // Find the atom's slug from its data hash — use name as fallback
+                const slug = atom.name
+                  .toLowerCase()
+                  .replace(/[^a-z0-9]+/g, "-")
+                  .replace(/(^-|-$)/g, "");
+                router.push(`/curate/${slug}`);
+              }}
+              className="bg-bg p-5 flex flex-col gap-3 cursor-pointer group rounded-xl border border-border transition-colors duration-200 hover:border-border-light hover:bg-surface/50"
+            >
+              {/* Header */}
+              <div className="flex items-center gap-3">
+                <div className="w-11 h-11 rounded-full bg-gradient-to-br from-accent/15 to-purple/15 border border-accent/20 flex items-center justify-center text-lg shrink-0">
+                  {typeIcon(atom.componentType)}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="text-[15px] font-bold text-text-primary truncate">
+                    {atom.name}
+                  </div>
+                  <div className="text-xs text-text-secondary mt-0.5">
+                    {atom.componentType && (
+                      <span className="uppercase">{atom.componentType}</span>
+                    )}
+                    {atom.contexts.length > 0 && (
+                      <span>
+                        {atom.componentType ? " · " : ""}
+                        {atom.contexts[0]}
+                      </span>
+                    )}
+                  </div>
+                </div>
+                <div className="flex flex-col items-end shrink-0">
+                  <div className="text-sm font-bold text-amber flex items-center gap-1">
+                    <span>★</span> {atom.totalMarketCap}
+                  </div>
+                  {atom.positionCount > 0 && (
+                    <div className="text-[10px] text-text-muted">
+                      {atom.positionCount} staker{atom.positionCount > 1 ? "s" : ""}
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Description */}
+              {atom.description && (
+                <p className="text-xs text-text-secondary leading-relaxed line-clamp-2">
+                  {atom.description}
+                </p>
+              )}
+
+              {/* Context chips */}
+              {atom.contexts.length > 0 && (
+                <div className="flex flex-wrap gap-1.5">
+                  {atom.contexts.map((ctx) => (
+                    <span
+                      key={ctx}
+                      className="text-xs px-2.5 py-1 rounded-lg bg-surface-2 border border-border text-text-secondary"
+                    >
+                      {ctx}
+                    </span>
+                  ))}
+                </div>
+              )}
+
+              {/* Footer */}
+              <div className="flex items-center justify-between pt-2 border-t border-border/60">
+                <span className="text-xs text-text-muted flex items-center gap-1">
+                  <span className="w-1.5 h-1.5 bg-green rounded-full" />
+                  On-chain · {atom.term_id}
+                </span>
+                <span className="text-[12px] font-semibold text-accent group-hover:text-text-primary transition-colors duration-200">
+                  View details →
+                </span>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Empty state */}
+      {!loading && !error && atoms.length === 0 && (
+        <div className="flex items-center justify-center py-20">
+          <div className="flex flex-col items-center gap-3">
+            <span className="text-3xl">🔍</span>
+            <span className="text-sm text-text-secondary">
+              No components found on-chain
+            </span>
+          </div>
+        </div>
+      )}
     </>
   );
 }
