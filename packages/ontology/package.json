@@ -15,17 +15,18 @@
     "dev": "tsc --watch",
     "typecheck": "tsc --noEmit",
     "clean": "rm -rf dist",
-    "seed:intuition": "node --loader ts-node/esm src/seed/seed-intuition.ts",
-    "seed:test": "node --loader ts-node/esm src/seed/seed-intuition.ts --test",
-    "seed:full": "node --loader ts-node/esm src/seed/seed-intuition.ts --full"
+    "seed:intuition": "tsx src/seed/seed-intuition.ts",
+    "seed:test": "tsx src/seed/seed-intuition.ts --test",
+    "seed:full": "tsx src/seed/seed-intuition.ts --full"
   },
   "dependencies": {
     "ethers": "^6.13.4",
-    "dotenv": "^16.4.5"
+    "dotenv": "^16.4.5",
+    "pinata": "^1.3.1"
   },
   "devDependencies": {
     "typescript": "^5.4.0",
     "@types/node": "^20.0.0",
-    "ts-node": "^10.9.2"
+    "tsx": "^4.19.2"
   }
 }

@@ -17,11 +17,17 @@
 
 import { ethers } from "ethers";
 import { config } from "dotenv";
-import { readFileSync } from "fs";
-import { join } from "path";
+import { readFileSync, writeFileSync } from "fs";
+import { resolve } from "path";
+import { PinataSDK } from "pinata";
 
-// Load environment variables
-config();
+// Load environment variables from current directory (packages/ontology)
+config({ path: resolve(process.cwd(), ".env") });
+
+// Initialize Pinata client
+const pinata = new PinataSDK({
+  pinataJwt: process.env.PINATA_JWT!,
+});
 
 // Intuition Mainnet configuration
 const CHAIN_ID = 1155;
@@ -52,20 +58,36 @@ interface TripleData {
   object: string;   // label of object atom
 }
 
-// Load ontology data from JSON
-const ONTOLOGY_PATH = join(__dirname, "../../../plans/ontology-foundation-w4-p3.json");
+// Load ontology data from JSON using absolute path from cwd
+// When running from packages/ontology: ../../plans/ontology-foundation-w4-p3.json
+const ONTOLOGY_PATH = resolve(process.cwd(), "../../plans/ontology-foundation-w4-p3.json");
 const ontology = JSON.parse(readFileSync(ONTOLOGY_PATH, "utf-8"));
 
-// Helper: Convert atom data to IPFS URI
-function atomToIPFSUri(atom: AtomData): string {
-  const json = JSON.stringify({
+// Helper: Upload atom metadata to IPFS via Pinata and return ipfs:// URI
+async function uploadAtomToIPFS(atom: AtomData): Promise<string> {
+  const metadata = {
     name: atom.label,
     description: atom.description,
     ...(atom.url && { external_url: atom.url }),
-  });
-  // For now, we'll use a simple data URI instead of actual IPFS
-  // In production, you should upload to IPFS first
-  return `data:application/json,${encodeURIComponent(json)}`;
+  };
+
+  try {
+    const upload = await pinata.upload.json(metadata);
+    // Pinata SDK v1 returns { cid } instead of { IpfsHash }
+    const cid = upload.cid || upload.IpfsHash;
+
+    if (!cid) {
+      console.error(`   ❌ Upload response:`, upload);
+      throw new Error("No CID returned from Pinata");
+    }
+
+    const ipfsUri = `ipfs://${cid}`;
+    console.log(`   📌 Pinned to IPFS: ${ipfsUri}`);
+    return ipfsUri;
+  } catch (error) {
+    console.error(`   ❌ Failed to upload ${atom.label} to IPFS:`, error);
+    throw error;
+  }
 }
 
 // Helper: Wait for transaction with custom polling
@@ -114,7 +136,15 @@ async function main() {
     process.exit(1);
   }
 
-  console.log("✅ PRIVATE_KEY found in .env\n");
+  // Check for Pinata JWT
+  if (!process.env.PINATA_JWT) {
+    console.error("❌ PINATA_JWT not found in .env file");
+    console.error("   Get your JWT from https://pinata.cloud and add: PINATA_JWT=...");
+    process.exit(1);
+  }
+
+  console.log("✅ PRIVATE_KEY found in .env");
+  console.log("✅ PINATA_JWT found in .env\n");
 
   // Setup provider with custom polling interval
   const provider = new ethers.JsonRpcProvider(RPC_URL, CHAIN_ID, {
@@ -154,31 +184,38 @@ async function main() {
     console.log(`📝 Total atoms to create: ${atoms.length}\n`);
   }
 
-  // Prepare atom data with IDs
-  const atomsWithData = await Promise.all(
-    atoms.map(async (atom, index) => {
-      const uri = atomToIPFSUri(atom);
-      const hexData = ethers.hexlify(ethers.toUtf8Bytes(uri));
-      const atomId = await contract.calculateAtomId(hexData);
+  // Prepare atom data with IDs (upload to IPFS first)
+  console.log("📌 Uploading atoms to IPFS...\n");
 
-      // Add delay to avoid rate limiting
-      if (index > 0 && index % 2 === 0) {
-        await delay(400);
-      }
+  const atomsWithData = [];
 
-      const exists = await contract.isTermCreated(atomId);
+  for (let index = 0; index < atoms.length; index++) {
+    const atom = atoms[index];
+    console.log(`[${index + 1}/${atoms.length}] ${atom.label}`);
 
-      await delay(800);
+    // Upload to IPFS and get ipfs:// URI
+    const uri = await uploadAtomToIPFS(atom);
+    const hexData = ethers.hexlify(ethers.toUtf8Bytes(uri));
+    const atomId = await contract.calculateAtomId(hexData);
 
-      return {
-        ...atom,
-        uri,
-        hexData,
-        atomId,
-        exists,
-      };
-    })
-  );
+    // Check if atom already exists on-chain
+    const exists = await contract.isTermCreated(atomId);
+
+    atomsWithData.push({
+      ...atom,
+      uri,
+      hexData,
+      atomId,
+      exists,
+    });
+
+    // Add delay to avoid rate limiting (both Pinata and RPC)
+    if (index < atoms.length - 1) {
+      await delay(1000); // 1s between uploads
+    }
+  }
+
+  console.log("");
 
   // Filter atoms that need to be created
   const toCreate = atomsWithData.filter((a) => !a.exists);
@@ -261,7 +298,7 @@ async function main() {
     atomIdMap[label] = id;
   });
 
-  const atomIdMapPath = join(__dirname, "atom-ids.json");
+  const atomIdMapPath = resolve(process.cwd(), "src/seed/atom-ids.json");
   writeFileSync(atomIdMapPath, JSON.stringify(atomIdMap, null, 2));
   console.log(`\n💾 Atom IDs saved to: ${atomIdMapPath}\n`);
 
@@ -362,9 +399,6 @@ async function main() {
   console.log("   2. Test MCP search_atoms to verify discovery");
   console.log("   3. Test Wispear chatbot blueprint generation\n");
 }
-
-// Add missing import
-import { writeFileSync } from "fs";
 
 main().catch((error) => {
   console.error("💥 Fatal error:", error);
