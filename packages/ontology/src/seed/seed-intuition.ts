@@ -40,13 +40,12 @@ const MULTIVAULT_ABI = [
   "function getAtomCost() view returns (uint256)",
   "function getTripleCost() view returns (uint256)",
   "function calculateAtomId(bytes data) pure returns (bytes32)",
+  "function calculateTripleId(bytes32 subjectId, bytes32 predicateId, bytes32 objectId) pure returns (bytes32)",
   "function isTermCreated(bytes32 id) view returns (bool)",
-  "function createAtoms(address receiver, bytes[] data, uint256[] assets, uint256 curveId) payable returns (bytes32[])",
-  "function createTriples(address receiver, bytes32[] subjectIds, bytes32[] predicateIds, bytes32[] objectIds, uint256[] assets, uint256 curveId) payable returns (bytes32[])",
+  "function createAtoms(bytes[] data, uint256[] assets) payable returns (bytes32[])",
+  "function createTriples(bytes32[] subjectIds, bytes32[] predicateIds, bytes32[] objectIds, uint256[] assets) payable returns (bytes32[])",
 ];
 
-// Curve ID: 1 = Linear bonding curve
-const CURVE_ID = 1n;
 
 // Atom definition
 interface AtomData {
@@ -299,10 +298,24 @@ async function main() {
     url: atom.url,
   }));
 
-  // In test mode, only create the first atom
+  // In test mode, create atoms needed for 1 complete component chain
   if (isTestMode) {
-    atoms = atoms.slice(0, 1);
-    console.log(`🧪 TEST MODE: Will create only 1 atom: "${atoms[0].label}"\n`);
+    // For testing: mcp-notion chain
+    // Atoms needed: mcp-notion, tool, is-best-of, in-context-of, content-automation, belongs-to, productivity
+    const testAtomIds = [
+      "mcp-notion",           // component
+      "tool",                 // type
+      "is-best-of",           // predicate
+      "in-context-of",        // predicate
+      "content-automation",   // context
+      "belongs-to",           // predicate
+      "productivity"          // category
+    ];
+    atoms = atoms.filter(a => testAtomIds.includes(a.id));
+    console.log(`🧪 TEST MODE: Creating complete chain for mcp-notion`);
+    console.log(`📝 Will create ${atoms.length} atoms:\n`);
+    atoms.forEach(a => console.log(`   - ${a.label}`));
+    console.log("");
   } else {
     console.log(`📝 Total atoms to create: ${atoms.length}\n`);
   }
@@ -357,9 +370,9 @@ async function main() {
   const BATCH_SIZE = 20;
   const createdAtomIds: Map<string, string> = new Map();
 
-  // Store existing atom IDs
+  // Store existing atom IDs (keyed by ontology id, e.g. "mcp-notion")
   existing.forEach((a) => {
-    createdAtomIds.set(a.label, a.atomId);
+    createdAtomIds.set(a.id, a.atomId);
   });
 
   if (toCreate.length > 0) {
@@ -381,10 +394,8 @@ async function main() {
 
       try {
         const tx = await contract.createAtoms(
-          wallet.address,  // receiver
-          atomDatas,       // data
-          assets,          // assets
-          CURVE_ID,        // curveId (1 = linear)
+          atomDatas,
+          assets,
           { value: totalCost }
         );
 
@@ -395,9 +406,9 @@ async function main() {
         if (receipt && receipt.status === 1) {
           console.log(`✅ Batch ${batchNum} created successfully!\n`);
 
-          // Store created atom IDs
+          // Store created atom IDs (keyed by ontology id, e.g. "mcp-notion")
           batch.forEach((a) => {
-            createdAtomIds.set(a.label, a.atomId);
+            createdAtomIds.set(a.id, a.atomId);
           });
         } else {
           console.error(`❌ Batch ${batchNum} failed!\n`);
@@ -413,7 +424,7 @@ async function main() {
     }
   }
 
-  console.log(`\n✅ All atoms created!\n`);
+  console.log(`\n✅ All atoms created with succes !\n`);
   console.log("📋 Atom ID mapping:");
   createdAtomIds.forEach((id, label) => {
     console.log(`  ${label}: ${id}`);
@@ -429,21 +440,21 @@ async function main() {
   writeFileSync(atomIdMapPath, JSON.stringify(atomIdMap, null, 2));
   console.log(`\n💾 Atom IDs saved to: ${atomIdMapPath}\n`);
 
-  // Skip triple creation in test mode
+  // In test mode, we continue to create triples for the test component
   if (isTestMode) {
-    console.log("🧪 TEST MODE: Skipping triple creation\n");
-    console.log("✅ Test complete!");
-    console.log("\n📊 Summary:");
-    console.log(`   - Atoms created: ${createdAtomIds.size}`);
-    console.log(`   - Triples created: 0 (test mode)`);
-    console.log("\n🚀 Next step: Run 'pnpm --filter @wispr/ontology seed:full' to create all atoms and triples\n");
-    return;
+    console.log("🧪 TEST MODE: Creating triples for mcp-notion chain\n");
   }
 
   // === TIER 1: Create base triples (component → is-best-of → type) ===
   console.log(`\n🔗 TIER 1: Creating base triples (is-best-of)...\n`);
 
-  const baseTriples = ontology.triples.base_triples;
+  let baseTriples = ontology.triples.base_triples;
+
+  // In test mode, only create triples for mcp-notion
+  if (isTestMode) {
+    baseTriples = baseTriples.filter((t: any) => t.id === "T1-mcp-notion");
+  }
+
   const baseTripleIds = new Map<string, string>(); // Maps triple.id → tripleTermId
 
   console.log(`📝 ${baseTriples.length} base triples to create\n`);
@@ -465,6 +476,14 @@ async function main() {
       continue;
     }
 
+    const tripleTermId = await contract.calculateTripleId(subjectId, predicateId, objectId);
+    const tripleExists = await contract.isTermCreated(tripleTermId);
+    if (tripleExists) {
+      console.log(`   ✅ Already exists: ${triple.subject} → ${triple.predicate} → ${triple.object}`);
+      baseTripleIds.set(triple.id, tripleTermId);
+      continue;
+    }
+
     console.log(`   ${triple.subject} → ${triple.predicate} → ${triple.object}`);
 
     subjectIds.push(subjectId);
@@ -480,12 +499,10 @@ async function main() {
 
     try {
       const tx = await contract.createTriples(
-        wallet.address,
         subjectIds,
         predicateIds,
         objectIds,
         assets,
-        CURVE_ID,
         { value: totalCost }
       );
 
@@ -495,18 +512,41 @@ async function main() {
       if (receipt && receipt.status === 1) {
         console.log(`✅ Base triples created successfully!\n`);
 
-        // Calculate and store triple IDs
-        // Triple ID = hash(subjectId, predicateId, objectId)
+        // Extract triple IDs from transaction logs
+        // The contract returns bytes32[] — parse from return data via logs
+        // TripleCreated event: keccak256("TripleCreated(bytes32,bytes32,bytes32,bytes32)")
+        const tripleCreatedTopic = ethers.id("TripleCreated(bytes32,bytes32,bytes32,bytes32)");
+        const tripleIds: string[] = [];
+
+        for (const log of receipt.logs) {
+          if (log.topics[0] === tripleCreatedTopic) {
+            // topics[1] = tripleId (the term ID of the triple itself)
+            tripleIds.push(log.topics[1]);
+          }
+        }
+
+        // Fallback: if no events found, try to decode return data
+        if (tripleIds.length === 0) {
+          console.warn("   ⚠️  No TripleCreated events found, trying TermCreated...");
+          const termCreatedTopic = ethers.id("TermCreated(bytes32)");
+          for (const log of receipt.logs) {
+            if (log.topics[0] === termCreatedTopic) {
+              tripleIds.push(log.topics[1]);
+            }
+          }
+        }
+
+        console.log(`   Found ${tripleIds.length} triple ID(s) in logs`);
+
         for (let i = 0; i < tripleMetadata.length; i++) {
           const metadata = tripleMetadata[i];
-          const tripleId = ethers.keccak256(
-            ethers.solidityPacked(
-              ["bytes32", "bytes32", "bytes32"],
-              [subjectIds[i], predicateIds[i], objectIds[i]]
-            )
-          );
-          baseTripleIds.set(metadata.id, tripleId);
-          console.log(`   ${metadata.id}: ${tripleId}`);
+          const tripleId = tripleIds[i];
+          if (tripleId) {
+            baseTripleIds.set(metadata.id, tripleId);
+            console.log(`   ${metadata.id}: ${tripleId}`);
+          } else {
+            console.warn(`   ⚠️  No triple ID found for ${metadata.id}`);
+          }
         }
       } else {
         console.error(`❌ Base triples creation failed!\n`);
@@ -521,7 +561,13 @@ async function main() {
   // === TIER 2: Create nested triples (T1 → in-context-of → context) ===
   console.log(`\n🔗 TIER 2: Creating nested triples (in-context-of)...\n`);
 
-  const nestedTriples = ontology.triples.nested_triples;
+  let nestedTriples = ontology.triples.nested_triples;
+
+  // In test mode, only create nested triples for mcp-notion
+  if (isTestMode) {
+    nestedTriples = nestedTriples.filter((t: any) => t.subject_triple === "T1-mcp-notion");
+  }
+
   console.log(`📝 ${nestedTriples.length} nested triples to create\n`);
 
   const nestedSubjectIds: string[] = [];
@@ -539,6 +585,13 @@ async function main() {
       continue;
     }
 
+    const nestedTermId = await contract.calculateTripleId(subjectTripleId, predicateId, objectId);
+    const nestedExists = await contract.isTermCreated(nestedTermId);
+    if (nestedExists) {
+      console.log(`   ✅ Already exists: (${triple.subject_triple}) → ${triple.predicate} → ${triple.object}`);
+      continue;
+    }
+
     console.log(`   (${triple.subject_triple}) → ${triple.predicate} → ${triple.object}`);
 
     nestedSubjectIds.push(subjectTripleId);
@@ -553,12 +606,10 @@ async function main() {
 
     try {
       const tx = await contract.createTriples(
-        wallet.address,
         nestedSubjectIds,
         nestedPredicateIds,
         nestedObjectIds,
         nestedAssets,
-        CURVE_ID,
         { value: totalCost }
       );
 
@@ -580,7 +631,13 @@ async function main() {
   // === TIER 3: Create category triples (context → belongs-to → category) ===
   console.log(`\n🔗 TIER 3: Creating category triples (belongs-to)...\n`);
 
-  const categoryTriples = ontology.triples.category_triples;
+  let categoryTriples = ontology.triples.category_triples;
+
+  // In test mode, only create category triple for content-automation
+  if (isTestMode) {
+    categoryTriples = categoryTriples.filter((t: any) => t.subject === "content-automation");
+  }
+
   console.log(`📝 ${categoryTriples.length} category triples to create\n`);
 
   const categorySubjectIds: string[] = [];
@@ -598,6 +655,13 @@ async function main() {
       continue;
     }
 
+    const catTermId = await contract.calculateTripleId(subjectId, predicateId, objectId);
+    const catExists = await contract.isTermCreated(catTermId);
+    if (catExists) {
+      console.log(`   ✅ Already exists: ${triple.subject} → ${triple.predicate} → ${triple.object}`);
+      continue;
+    }
+
     console.log(`   ${triple.subject} → ${triple.predicate} → ${triple.object}`);
 
     categorySubjectIds.push(subjectId);
@@ -612,12 +676,10 @@ async function main() {
 
     try {
       const tx = await contract.createTriples(
-        wallet.address,
         categorySubjectIds,
         categoryPredicateIds,
         categoryObjectIds,
         categoryAssets,
-        CURVE_ID,
         { value: totalCost }
       );
 
@@ -635,10 +697,25 @@ async function main() {
   }
 
   console.log("\n🎉 Ontology seed complete!");
-  console.log("\n✅ Next steps:");
-  console.log("   1. Verify atoms on https://explorer.intuition.systems");
-  console.log("   2. Test MCP search_atoms to verify discovery");
-  console.log("   3. Test Wispear chatbot blueprint generation\n");
+
+  if (isTestMode) {
+    console.log("\n📊 Test Summary:");
+    console.log("   Complete chain created for mcp-notion:");
+    console.log("   • Atoms: 7 (component + type + predicates + context + category)");
+    console.log("   • Tier 1: mcp-notion → is-best-of → tool");
+    console.log("   • Tier 2: (T1) → in-context-of → content-automation");
+    console.log("   • Tier 3: content-automation → belongs-to → productivity");
+    console.log("\n✅ Next steps:");
+    console.log("   1. Verify atoms on https://portal.intuition.systems");
+    console.log("   2. Check that mcp-notion has Notion favicon (IPFS)");
+    console.log("   3. Verify nested triple structure");
+    console.log("   4. Run 'pnpm seed:full' to create complete ontology\n");
+  } else {
+    console.log("\n✅ Next steps:");
+    console.log("   1. Verify atoms on https://portal.intuition.systems");
+    console.log("   2. Test MCP search_atoms to verify discovery");
+    console.log("   3. Test Wispear chatbot blueprint generation\n");
+  }
 }
 
 main().catch((error) => {

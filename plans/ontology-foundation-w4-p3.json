@@ -21,7 +21,7 @@
     },
     {
       "id": "claude-sonnet-4-5",
-      "name": "claude-sonnet-4-5",
+      "name": "Claude Sonnet 4.5",
       "description": "Anthropic's Claude Sonnet 4.5 - long-form generation, reasoning, tone control",
       "url": "https://docs.anthropic.com/en/docs/about-claude/models"
     },
@@ -45,93 +45,93 @@
     },
     {
       "id": "brand-voice-skill",
-      "name": "brand-voice-skill",
+      "name": "Brand Voice Skill",
       "description": "AI service that analyzes user's writing style and applies it to new content",
       "url": "whisper.xyz/skills/brand-voice"
     },
     {
       "id": "tool",
-      "name": "tool",
+      "name": "Tool",
       "description": "External tools, MCPs, SDKs, APIs"
     },
     {
       "id": "skill",
-      "name": "skill",
+      "name": "Skill",
       "description": "Domain-specific AI services and capabilities"
     },
     {
       "id": "model",
-      "name": "model",
+      "name": "Model",
       "description": "LLM models for reasoning and generation"
     },
     {
       "id": "content-automation",
-      "name": "content-automation",
+      "name": "Content Automation",
       "description": "Automated content management and workflows"
     },
     {
       "id": "social-media",
-      "name": "social-media",
+      "name": "Social Media",
       "description": "Social media platforms and publishing"
     },
     {
       "id": "content-generation",
-      "name": "content-generation",
+      "name": "Content Generation",
       "description": "AI-powered content generation"
     },
     {
       "id": "defi",
-      "name": "defi",
+      "name": "DeFi",
       "description": "Decentralized finance protocols and applications"
     },
     {
       "id": "web3-building",
-      "name": "web3-building",
+      "name": "Web3 Building",
       "description": "Web3 development and infrastructure"
     },
     {
       "id": "content-creation",
-      "name": "content-creation",
+      "name": "Content Creation",
       "description": "Content creation and writing"
     },
     {
       "id": "productivity",
-      "name": "productivity",
+      "name": "Productivity",
       "description": "Productivity and workflow automation tools"
     },
     {
       "id": "communication",
-      "name": "communication",
+      "name": "Communication",
       "description": "Communication and social platforms"
     },
     {
       "id": "creativity",
-      "name": "creativity",
+      "name": "Creativity",
       "description": "Creative content generation and writing"
     },
     {
       "id": "finance",
-      "name": "finance",
+      "name": "Finance",
       "description": "Financial services and DeFi protocols"
     },
     {
       "id": "infrastructure",
-      "name": "infrastructure",
+      "name": "Infrastructure",
       "description": "Web3 infrastructure and development tools"
     },
     {
       "id": "is-best-of",
-      "name": "is-best-of",
+      "name": "Is Best Of",
       "description": "Predicate: Indicates component type classification"
     },
     {
       "id": "in-context-of",
-      "name": "in-context-of",
+      "name": "In Context Of",
       "description": "Predicate: Indicates usage context for a component"
     },
     {
       "id": "belongs-to",
-      "name": "belongs-to",
+      "name": "Belongs To",
       "description": "Predicate: Indicates category membership"
     }
   ],

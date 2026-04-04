@@ -1,3 +1,9 @@
 {
-  "MCP Notion": "0x93ab2ed9b1e38c3886202043f5739291fb471a5cd8061665f145dfc1ecb69b7c"
+  "mcp-notion": "0x276125410411831ca9eaa3059e3475a1efc89151bec1a884ec4d09f23f532dfc",
+  "tool": "0x20abbd15bf2a0e503b9ba2b941e15c3847e67ed6d99fc645523f27d2a84c5e4e",
+  "productivity": "0xdfe4a8eef298a7b5d9c1dd77176195d1cdcd8eef24f7abcc059ddba27b1a76f0",
+  "content-automation": "0x8a8150aadc28de8c1f5872900968662776a016add87cfe7dd51fd56f1b64316f",
+  "is-best-of": "0x8fd780ca7db1d0a8a574a0b8dcffb29b77b4cbdfec610f96cf12a01229fad2a6",
+  "in-context-of": "0xa88b9975be0f56da24b2638a6a386d6ea3479a1ef6f04e08255bc7ca40d631c0",
+  "belongs-to": "0x58b62f1115190e5bd9f5c673d56db570fa73b230eb7803a6ea2e57195e01ec27"
 }
