@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { gqlFetch } from "@/lib/graphql";
+import { getContextsByTermId } from "@/lib/termIds";
 
 // On-chain term IDs from packages/ontology/src/seed/deployed.json
 // Only components (not types/contexts/predicates)
@@ -125,13 +126,8 @@ function parseAtom(raw: any): OnChainAtom {
     (t: any) => t.predicate.toLowerCase().replace(/[\s-]/g, "") === "isbestof",
   );
 
-  // Extract contexts from "in-context-of" triples (case-insensitive match)
-  const contexts = triples
-    .filter(
-      (t: any) =>
-        t.predicate.toLowerCase().replace(/[\s-]/g, "") === "incontextof",
-    )
-    .map((t: any) => t.object);
+  // Extract contexts from deployed.json nested triples (by term_id)
+  const contexts = getContextsByTermId(raw.term_id);
 
   return {
     term_id: raw.term_id,
