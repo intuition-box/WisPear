@@ -1,24 +1,18 @@
 FROM node:22-slim AS base
 
-# Install bun
 RUN npm install -g bun
-
 WORKDIR /app
 
 # ── Install ──────────────────────────────────────────────────────────────────
 FROM base AS install
 
-# Python + build tools for better-sqlite3 native compilation
 RUN apt-get update && apt-get install -y --no-install-recommends python3 make g++ && rm -rf /var/lib/apt/lists/*
 
-# Copy workspace root files
 COPY package.json bun.lock turbo.json ./
-
-# Copy only the packages needed for feedback-api
 COPY packages/feedback-api/package.json packages/feedback-api/
 COPY packages/ontology/package.json packages/ontology/
 
-# Stub out other workspace packages so bun doesn't complain
+# Stub other workspace packages
 RUN mkdir -p apps/chat apps/curator apps/swipe packages/agent packages/ui packages/wallet && \
     echo '{"name":"@wispr/chat","version":"0.0.1","private":true}' > apps/chat/package.json && \
     echo '{"name":"@wispr/curator","version":"0.0.1","private":true}' > apps/curator/package.json && \
@@ -33,15 +27,11 @@ RUN bun install
 FROM base AS build
 
 COPY --from=install /app/node_modules ./node_modules
-COPY --from=install /app/packages/feedback-api/node_modules ./packages/feedback-api/node_modules
-COPY --from=install /app/packages/ontology/node_modules ./packages/ontology/node_modules
 
-# Copy source
 COPY packages/ontology packages/ontology
 COPY packages/feedback-api packages/feedback-api
 COPY tsconfig.json ./
 
-# Build ontology first (dependency), then feedback-api
 RUN cd packages/ontology && npx tsc || true
 RUN cd packages/feedback-api && npx tsc
 
@@ -51,7 +41,6 @@ FROM node:22-slim AS runtime
 WORKDIR /app
 
 COPY --from=install /app/node_modules ./node_modules
-COPY --from=install /app/packages/feedback-api/node_modules ./packages/feedback-api/node_modules
 COPY --from=build /app/packages/feedback-api/dist ./packages/feedback-api/dist
 COPY --from=build /app/packages/ontology/dist ./packages/ontology/dist
 COPY packages/feedback-api/package.json ./packages/feedback-api/
