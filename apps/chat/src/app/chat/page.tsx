@@ -218,7 +218,7 @@ export default function ChatPage() {
       <div className="flex-1 overflow-y-auto pt-4 sm:pt-24 pb-4 space-y-8">
         {/* ── Empty state ── */}
         {!hasMessages && (
-          <div className="flex flex-col items-center h-full text-center -mt-8 sm:-mt-16">
+          <div className="flex flex-col items-center h-full text-center mt-8 sm:-mt-16">
             {/* Animated logo + wordmark */}
             <div className="flex items-end">
               <WispearLogoAnimated mode="intro-only" theme="dark" className="h-36 sm:h-64 md:h-80 w-auto" />
@@ -305,7 +305,7 @@ export default function ChatPage() {
       </div>
 
       {/* ── Input bar ── */}
-      <div className="border-t border-border px-2 sm:px-4 py-3">
+      <div className="sticky bottom-0 border-t border-border bg-[#121433] px-2 sm:px-4 py-3">
         <div className="flex items-end gap-2">
           <textarea
             className="flex-1 resize-none bg-secondary rounded-xl px-4 py-3 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring"
