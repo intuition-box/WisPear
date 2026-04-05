@@ -1,4 +1,7 @@
-FROM oven/bun:1.2 AS base
+FROM node:22-slim AS base
+
+# Install bun
+RUN npm install -g bun
 
 WORKDIR /app
 
@@ -43,7 +46,9 @@ RUN cd packages/ontology && npx tsc || true
 RUN cd packages/feedback-api && npx tsc
 
 # ── Runtime ──────────────────────────────────────────────────────────────────
-FROM base AS runtime
+FROM node:22-slim AS runtime
+
+WORKDIR /app
 
 COPY --from=install /app/node_modules ./node_modules
 COPY --from=install /app/packages/feedback-api/node_modules ./packages/feedback-api/node_modules
