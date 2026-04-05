@@ -1,5 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  output: "standalone",
   transpilePackages: [
     "@wispr/ontology", "@wispr/wallet", "@wispr/ui", "@wispr/feedback-api",
     "wagmi", "@wagmi/core", "@wagmi/connectors",
