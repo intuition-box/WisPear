@@ -13,7 +13,7 @@ import { ProfileCard } from "@/components/ProfileCard";
 import { WalletConnect } from "@/components/WalletConnect";
 import { PublishButton } from "@/components/PublishButton";
 import { ComponentSwipeCard } from "@/components/ComponentSwipeCard";
-import { Logo } from "@wispr/ui";
+import { Logo, WispearLogoAnimated } from "@wispr/ui";
 
 export default function SwipeFlow() {
   const { state, currentQuestion, profile, progress, swipe, reset } =
@@ -342,16 +342,15 @@ export default function SwipeFlow() {
               transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
               className="flex flex-col items-center gap-7 w-full max-w-[400px]"
             >
-              <div className="text-center">
+              <div className="flex flex-col items-center">
                 <motion.div
-                  className="inline-block mb-3"
                   initial={{ scale: 0, rotate: -20 }}
                   animate={{ scale: 1, rotate: 0 }}
                   transition={{ delay: 0.3, type: "spring", stiffness: 400, damping: 15 }}
                 >
-                  <Logo variant="icon" theme="dark" width={48} height={53} />
+                  <WispearLogoAnimated mode="ambient" theme="dark" className="h-28 w-auto" />
                 </motion.div>
-                <h1 className="font-display text-[32px] text-ink font-bold">
+                <h1 className="font-display text-[32px] text-ink font-bold -mt-2">
                   Bravo!
                 </h1>
               </div>

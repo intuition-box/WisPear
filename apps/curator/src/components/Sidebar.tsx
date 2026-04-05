@@ -4,15 +4,17 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Logo, brand } from "@wispr/ui";
 import { useWalletConnection } from "@wispr/wallet";
+import { Compass, PlusCircle, BarChart3, TrendingUp, MessageCircle, Settings, ExternalLink, Wallet } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 
-const NAV_ITEMS = [
-  { href: "/explorer", icon: "🧭", label: "Explorer", external: false },
+const NAV_ITEMS: { href: string; icon: LucideIcon | "🍐"; label: string; external: boolean }[] = [
+  { href: "/explorer", icon: Compass, label: "Explorer", external: false },
   { href: "/curate", icon: "🍐", label: "Wispear", external: false },
-  { href: "/curate/new", icon: "➕", label: "Add New", external: false },
-  { href: "/activity", icon: "📊", label: "Activity", external: false },
-  { href: "/dashboard", icon: "📈", label: "Dashboard", external: false },
-  { href: "/chat", icon: "💬", label: "Chat", external: true },
-  { href: "/onboarding", icon: "⚙️", label: "Settings", external: false },
+  { href: "/curate/new", icon: PlusCircle, label: "Add New", external: false },
+  { href: "/activity", icon: BarChart3, label: "Activity", external: false },
+  { href: "/dashboard", icon: TrendingUp, label: "Dashboard", external: false },
+  { href: "/chat", icon: MessageCircle, label: "Chat", external: true },
+  { href: "/onboarding", icon: Settings, label: "Settings", external: false },
 ];
 
 export function Sidebar() {
@@ -47,11 +49,13 @@ export function Sidebar() {
                 rel="noopener noreferrer"
                 className={className}
               >
-                <span className="w-6 h-6 flex items-center justify-center shrink-0" style={{ color: isActive ? "#1990ff" : "#8888a0" }}>
-                  {item.icon}
-                </span>
+                {typeof item.icon === "string" ? (
+                  <span className="w-5 h-5 flex items-center justify-center text-base shrink-0">{item.icon}</span>
+                ) : (
+                  <item.icon className="w-5 h-5 shrink-0" style={{ color: isActive ? "#1990ff" : "#8888a0" }} />
+                )}
                 <span>{item.label}</span>
-                <span className="ml-auto text-[10px] text-text-muted">↗</span>
+                <ExternalLink className="ml-auto w-3.5 h-3.5 text-text-muted" />
               </a>
             );
           }
@@ -62,9 +66,11 @@ export function Sidebar() {
               href={item.href}
               className={className}
             >
-              <span className="w-6 h-6 flex items-center justify-center text-lg shrink-0">
-                {item.icon}
-              </span>
+              {typeof item.icon === "string" ? (
+                <span className="w-5 h-5 flex items-center justify-center text-base shrink-0">{item.icon}</span>
+              ) : (
+                <item.icon className="w-5 h-5 shrink-0" style={{ color: isActive ? "#1990ff" : "#8888a0" }} />
+              )}
               <span>{item.label}</span>
             </Link>
           );
@@ -97,8 +103,8 @@ export function Sidebar() {
           onClick={connect}
           className="flex items-center gap-2.5 px-3 py-3 rounded-full mt-3 hover:bg-hover transition-colors cursor-pointer"
         >
-          <div className="w-10 h-10 rounded-full bg-surface-2 border border-border flex items-center justify-center text-lg shrink-0">
-            🔗
+          <div className="w-10 h-10 rounded-full bg-surface-2 border border-border flex items-center justify-center shrink-0">
+            <Wallet className="w-5 h-5 text-text-secondary" />
           </div>
           <div className="flex-1 overflow-hidden">
             <div className="text-sm font-semibold text-text-primary truncate">

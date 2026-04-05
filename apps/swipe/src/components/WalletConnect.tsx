@@ -29,7 +29,7 @@ export function WalletConnect() {
           onClick={connect}
           className="flex items-center gap-2 bg-pear text-ink-inverse font-semibold text-[14px] px-7 py-3.5 rounded-2xl shadow-glow hover:shadow-lg transition-all duration-300 hover:-translate-y-0.5 active:translate-y-0"
         >
-          Connect Wallet
+          Connect
         </button>
         {error && (
           <span className="text-[12px] text-red text-center max-w-[280px]">

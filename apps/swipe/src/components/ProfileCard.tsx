@@ -1,6 +1,8 @@
 
 import type { Profile } from "@wispr/ontology";
 import { Logo } from "@wispr/ui";
+import { Globe, FileCode2, Palette, Server, PenTool, ClipboardList, Rocket } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 
 interface ProfileCardProps {
   profile: Profile;
@@ -23,14 +25,14 @@ const LEVEL_LABELS: Record<string, string> = {
   expert: "Expert",
 };
 
-const ROLE_EMOJI: Record<string, string> = {
-  "full-stack-web3": "🌐",
-  "smart-contract-dev": "📜",
-  "frontend-dev": "🎨",
-  "backend-dev": "⚙️",
-  designer: "✏️",
-  "product-manager": "📋",
-  founder: "🚀",
+const ROLE_ICON: Record<string, LucideIcon> = {
+  "full-stack-web3": Globe,
+  "smart-contract-dev": FileCode2,
+  "frontend-dev": Palette,
+  "backend-dev": Server,
+  designer: PenTool,
+  "product-manager": ClipboardList,
+  founder: Rocket,
 };
 
 const LEVEL_STYLE: Record<string, string> = {
@@ -43,7 +45,7 @@ const LEVEL_STYLE: Record<string, string> = {
 export function ProfileCard({ profile }: ProfileCardProps) {
   const roleLabel = ROLE_LABELS[profile.role] ?? profile.role;
   const levelLabel = LEVEL_LABELS[profile.level] ?? profile.level;
-  const emoji = ROLE_EMOJI[profile.role] ?? "👤";
+  const RoleIcon = ROLE_ICON[profile.role] ?? Globe;
   const levelStyle = LEVEL_STYLE[profile.level] ?? "bg-accent-soft text-accent";
 
   return (
@@ -57,7 +59,7 @@ export function ProfileCard({ profile }: ProfileCardProps) {
       </div>
 
       <div className="relative z-10 w-20 h-20 rounded-2xl bg-bg-raised flex items-center justify-center border border-line shadow-xs">
-        <span className="text-4xl">{emoji}</span>
+        <RoleIcon className="w-9 h-9 text-pear" />
       </div>
       <div className="relative z-10 text-center">
         <h2 className="font-display text-[22px] text-ink mb-3 font-bold">

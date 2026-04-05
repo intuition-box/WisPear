@@ -1,32 +1,41 @@
 import { useNavigate } from "react-router-dom";
 import { Hero } from "@/components/Hero";
+import { MousePointerClick, Sparkles, Share2, Globe, FileCode2, Palette, Server, PenTool, ClipboardList, Rocket, Sprout, Wrench, Zap, Brain } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 
-const STEPS = [
+const STEPS: { icon: LucideIcon; title: string; description: string }[] = [
   {
-    icon: "👆",
+    icon: MousePointerClick,
     title: "Swipe",
-    description: "Answer yes or no to adaptive questions about your work and AI tools.",
+    description: "Swipe through adaptive questions about how you build and use AI.",
   },
   {
-    icon: "✨",
+    icon: Sparkles,
     title: "Discover",
-    description: "Get your personalized role and AI maturity level — instantly.",
+    description: "Instantly reveal your builder role and AI maturity level.",
   },
   {
-    icon: "⛓️",
+    icon: Share2,
     title: "Publish",
-    description: "Mint your profile as on-chain data via Intuition Protocol.",
+    description: "Mint your profile on-chain and let your reputation speak for you.",
   },
 ];
 
-const ROLES = [
-  { emoji: "🌐", label: "Full Stack Web3" },
-  { emoji: "📜", label: "Smart Contract" },
-  { emoji: "🎨", label: "Frontend" },
-  { emoji: "⚙️", label: "Backend" },
-  { emoji: "✏️", label: "Designer" },
-  { emoji: "📋", label: "Product Manager" },
-  { emoji: "🚀", label: "Founder" },
+const ROLES: { icon: LucideIcon; label: string }[] = [
+  { icon: Globe, label: "Full Stack Web3" },
+  { icon: FileCode2, label: "Smart Contract" },
+  { icon: Palette, label: "Frontend" },
+  { icon: Server, label: "Backend" },
+  { icon: PenTool, label: "Designer" },
+  { icon: ClipboardList, label: "Product Manager" },
+  { icon: Rocket, label: "Founder" },
+];
+
+const AI_LEVELS: { icon: LucideIcon; label: string }[] = [
+  { icon: Sprout, label: "Beginner" },
+  { icon: Wrench, label: "Intermediate" },
+  { icon: Zap, label: "Advanced" },
+  { icon: Brain, label: "Expert" },
 ];
 
 export default function LandingPage() {
@@ -45,8 +54,8 @@ export default function LandingPage() {
               key={step.title}
               className="animate-fade-up flex items-start gap-4 bg-card rounded-2xl p-4 shadow-xs border border-line"
             >
-              <span className="text-xl w-10 h-10 rounded-xl bg-bg-raised flex items-center justify-center shrink-0">
-                {step.icon}
+              <span className="w-10 h-10 rounded-xl bg-bg-raised flex items-center justify-center shrink-0">
+                <step.icon className="w-5 h-5 text-pear" />
               </span>
               <div className="pt-0.5">
                 <h3 className="text-[14px] font-bold text-ink mb-0.5">
@@ -73,7 +82,7 @@ export default function LandingPage() {
               key={role.label}
               className="animate-fade-up flex items-center gap-1.5 bg-card border border-line rounded-full px-3.5 py-2 text-[13px] font-medium text-ink shadow-xs hover:shadow-sm hover:border-pear/20 hover:-translate-y-px transition-all duration-200 cursor-default"
             >
-              <span className="text-base">{role.emoji}</span>
+              <role.icon className="w-4 h-4 text-ink-secondary" />
               {role.label}
             </span>
           ))}
@@ -84,15 +93,15 @@ export default function LandingPage() {
       <section className="px-7 pb-10 max-w-[480px] mx-auto w-full">
         <h2 className="font-display text-[22px] text-ink mb-4 font-bold">4 AI levels</h2>
         <div className="flex gap-2">
-          {["Beginner", "Intermediate", "Advanced", "Expert"].map((level, i) => (
+          {AI_LEVELS.map((level) => (
             <div
-              key={level}
+              key={level.label}
               className="flex-1 bg-card border border-line rounded-xl p-3 text-center shadow-xs"
             >
-              <div className="text-lg mb-1">
-                {["🌱", "🔧", "⚡", "🧠"][i]}
+              <div className="flex justify-center mb-1">
+                <level.icon className="w-5 h-5 text-accent" />
               </div>
-              <span className="text-[11px] font-semibold text-ink-secondary">{level}</span>
+              <span className="text-[11px] font-semibold text-ink-secondary">{level.label}</span>
             </div>
           ))}
         </div>
