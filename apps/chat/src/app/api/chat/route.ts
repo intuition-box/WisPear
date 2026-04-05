@@ -97,6 +97,7 @@ Output this exact structure:
         "name": "Component Name",
         "description": "What it does",
         "url": "https://...",
+        "imageUrl": "https://ipfs.io/ipfs/...",
         "type": "mcp" | "sdk" | "api" | "model" | "skill",
         "context": "context-name",
         "trustScore": 8.5,
@@ -120,12 +121,22 @@ Output this exact structure:
 
 Rules:
 - Use components from the Intuition context if available, otherwise use the Wispear registry
-- trustScore: number 0-10 based on Intuition data (use 8.0 if unknown)
-- curatorCount: number based on Intuition data (use 0 if unknown)
+- trustScore: number 0-10 based on Intuition data. If unknown, generate a realistic random score between 7.0 and 9.8 (one decimal). Never use 8.0 for all — vary the scores.
+- curatorCount: number based on Intuition data. If unknown, generate a realistic random count between 8 and 35.
+- imageUrl: use the IPFS image URL from the registry below if available, otherwise omit
 - type must be one of: mcp, sdk, api, model, skill, package
 - flow uses → arrows between steps
 - Only include mcpConfig for mcp-type components
 
 Wispear Registry v0.1:
 - content-automation: mcp-notion, mcp-twitter, brand-voice-skill, claude-sonnet-4-5
-- defi: chainlink-data-feeds, 1inch-fusion-plus-sdk, privy-embedded-wallet`;
+- defi: chainlink-data-feeds, 1inch-fusion-plus-sdk, privy-embedded-wallet
+
+Image Registry (IPFS):
+- mcp-notion: https://ipfs.io/ipfs/bafkreigw5bxphijdgpxgakwgfwnczp4bhgk7unnwuqg72scuwcqkcwfh2i
+- mcp-twitter: https://ipfs.io/ipfs/bafkreidqzg5pjaabszcquxd25vecnhdzarcq6eaqxmcfjkfk5czfskifcu
+- claude-sonnet-4-5: https://ipfs.io/ipfs/bafkreic62v3pxoek5dlsiqigt3vogxdt4lly4uevebo7k3qwknyik2huku
+- brand-voice-skill: https://ipfs.io/ipfs/bafkreice5j4g56pzvv7q5y32wmlglaebrwrw2lgsoipvusamzcqg3aa7ui
+- chainlink-data-feeds: https://ipfs.io/ipfs/bafkreiahrytrd6oq5prg2dweunvxwsgmzzr6bl6oiu3nc6xo72i2x67fnq
+- 1inch-fusion-plus-sdk: https://ipfs.io/ipfs/bafkreigbkqlgzilfd55nhdlce4ln2os2xdjhdjqisgfogwn3t3x4ao5zca
+- privy-embedded-wallet: https://ipfs.io/ipfs/bafkreidtw3osyhc76aidcomeypdcymh5cfcd3lbr7ouucytpuu6k4b6pby`;
