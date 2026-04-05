@@ -24,6 +24,7 @@ export default function CuratePage() {
   const { atoms, loading, error } = useAtoms();
   const searchParams = useSearchParams();
   const [votes, setVotes] = useState<Record<string, Vote>>({});
+  const [amounts, setAmounts] = useState<Record<string, number>>({});
   const [cartOpen, setCartOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [txHash, setTxHash] = useState<string | null>(null);
@@ -67,16 +68,35 @@ export default function CuratePage() {
     return atoms.filter((atom) => atom.contexts.includes(activeContext));
   }, [atoms, activeContext]);
 
+  const DEFAULT_AMOUNT = 1;
+  const STEP = 1;
+
   const handleVote = (termId: string, vote: Vote) => {
-    setVotes((prev) => ({
-      ...prev,
-      [termId]: prev[termId] === vote ? null : vote,
-    }));
+    setVotes((prev) => {
+      const toggled = prev[termId] === vote ? null : vote;
+      if (!toggled) {
+        setAmounts((a) => { const n = { ...a }; delete n[termId]; return n; });
+      } else if (!amounts[termId]) {
+        setAmounts((a) => ({ ...a, [termId]: DEFAULT_AMOUNT }));
+      }
+      return { ...prev, [termId]: toggled };
+    });
+  };
+
+  const adjustAmount = (termId: string, delta: number) => {
+    setAmounts((prev) => {
+      const current = prev[termId] ?? DEFAULT_AMOUNT;
+      const next = Math.max(STEP, parseFloat((current + delta).toFixed(4)));
+      return { ...prev, [termId]: next };
+    });
   };
 
   const supportCount = Object.values(votes).filter((v) => v === "support").length;
   const opposeCount = Object.values(votes).filter((v) => v === "oppose").length;
   const totalVotes = supportCount + opposeCount;
+  const totalAmount = Object.entries(votes)
+    .filter(([, v]) => v)
+    .reduce((sum, [id]) => sum + (amounts[id] ?? DEFAULT_AMOUNT), 0);
 
   const toSlug = (atom: OnChainAtom) =>
     atom.name.toLowerCase().replace(/\+/g, "plus").replace(/[\s.]/g, "-").replace(/[^a-z0-9-]/g, "").replace(/-+/g, "-");
@@ -97,10 +117,8 @@ export default function CuratePage() {
     try {
       const multiVault = wallet.multiVault;
 
-      const [bondingConfig, atomCost] = await Promise.all([
-        multiVault.getBondingCurveConfig(),
-        multiVault.getAtomCost(),
-      ]);
+      const { ethers } = await import("ethers");
+      const bondingConfig = await multiVault.getBondingCurveConfig();
       const defaultCurveId = bondingConfig[1];
 
       const zeroBig = BigInt(0);
@@ -113,7 +131,6 @@ export default function CuratePage() {
         const vote = votes[atom.term_id];
         if (!vote) continue;
 
-        // Get the nested triple for the active context, or fallback to first context
         const ctx = activeContext ?? atom.contexts[0];
         if (!ctx) continue;
 
@@ -122,13 +139,13 @@ export default function CuratePage() {
 
         let depositTermId = nestedTripleId;
         if (vote === "oppose") {
-          // Deposit into the counter vault (against bonding curve)
           depositTermId = await multiVault.getCounterIdFromTripleId(nestedTripleId);
         }
 
+        const amt = amounts[atom.term_id] ?? DEFAULT_AMOUNT;
         termIds.push(depositTermId);
         curveIds.push(defaultCurveId);
-        assets.push(atomCost);
+        assets.push(ethers.parseEther(amt.toString()));
         minShares.push(zeroBig);
       }
 
@@ -419,41 +436,59 @@ export default function CuratePage() {
                         const v = votes[a.term_id]!;
                         const icon = TYPE_ICONS[a.componentType ?? ""] ?? "📦";
                         const ctx = activeContext ?? a.contexts[0];
+                        const amt = amounts[a.term_id] ?? DEFAULT_AMOUNT;
                         return (
                           <div
                             key={a.term_id}
-                            className="flex items-center gap-2.5 px-4 py-2.5 border-b border-border/50 last:border-none"
+                            className="flex flex-col gap-1.5 px-4 py-2.5 border-b border-border/50 last:border-none"
                           >
-                            <span className="text-sm shrink-0">{icon}</span>
-                            <div className="flex-1 min-w-0">
-                              <div className="text-[13px] text-text-primary font-medium truncate">{a.name}</div>
-                              {ctx && (
-                                <div className="text-[10px] text-accent font-semibold truncate">
-                                  {ctx.replace(/-/g, " ")}
-                                </div>
-                              )}
+                            <div className="flex items-center gap-2.5">
+                              <span className="text-sm shrink-0">{icon}</span>
+                              <div className="flex-1 min-w-0">
+                                <div className="text-[13px] text-text-primary font-medium truncate">{a.name}</div>
+                                {ctx && (
+                                  <div className="text-[10px] text-accent font-semibold truncate">
+                                    {ctx.replace(/-/g, " ")}
+                                  </div>
+                                )}
+                              </div>
+                              <span
+                                className={`text-[11px] font-bold px-2 py-0.5 rounded-full shrink-0 ${
+                                  v === "support"
+                                    ? "bg-pear-soft text-pear"
+                                    : "bg-red-soft text-red"
+                                }`}
+                              >
+                                {v === "support" ? "Yes" : "No"}
+                              </span>
+                              <button
+                                onClick={() => {
+                                  setVotes((prev) => { const n = { ...prev }; delete n[a.term_id]; return n; });
+                                  setAmounts((prev) => { const n = { ...prev }; delete n[a.term_id]; return n; });
+                                }}
+                                className="text-text-muted hover:text-text-primary text-[11px] transition-colors shrink-0"
+                              >
+                                ✕
+                              </button>
                             </div>
-                            <span
-                              className={`text-[11px] font-bold px-2 py-0.5 rounded-full shrink-0 ${
-                                v === "support"
-                                  ? "bg-pear-soft text-pear"
-                                  : "bg-red-soft text-red"
-                              }`}
-                            >
-                              {v === "support" ? "Yes" : "No"}
-                            </span>
-                            <button
-                              onClick={() =>
-                                setVotes((prev) => {
-                                  const next = { ...prev };
-                                  delete next[a.term_id];
-                                  return next;
-                                })
-                              }
-                              className="text-text-muted hover:text-text-primary text-[11px] transition-colors shrink-0"
-                            >
-                              ✕
-                            </button>
+                            {/* +/- amount control */}
+                            <div className="flex items-center gap-1.5 ml-7">
+                              <button
+                                onClick={() => adjustAmount(a.term_id, -STEP)}
+                                className="w-6 h-6 rounded-md bg-surface-2 border border-border text-text-muted hover:text-text-primary hover:border-border-light text-[13px] font-bold flex items-center justify-center transition-all"
+                              >
+                                −
+                              </button>
+                              <span className="text-[12px] font-mono font-semibold text-pear min-w-[60px] text-center">
+                                {amt.toFixed(3)} $T
+                              </span>
+                              <button
+                                onClick={() => adjustAmount(a.term_id, STEP)}
+                                className="w-6 h-6 rounded-md bg-surface-2 border border-border text-text-muted hover:text-text-primary hover:border-border-light text-[13px] font-bold flex items-center justify-center transition-all"
+                              >
+                                +
+                              </button>
+                            </div>
                           </div>
                         );
                       })}
@@ -476,7 +511,7 @@ export default function CuratePage() {
                     >
                       {submitting
                         ? "Submitting..."
-                        : `🍐 Submit ${totalVotes} vote${totalVotes > 1 ? "s" : ""} on-chain`}
+                        : `🍐 Submit ${totalVotes} vote${totalVotes > 1 ? "s" : ""} — ${totalAmount.toFixed(3)} $T`}
                     </button>
                   </div>
                 </>
