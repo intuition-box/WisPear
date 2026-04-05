@@ -20,6 +20,7 @@
     "start": "npx serve storybook-static -l 6006"
   },
   "dependencies": {
+    "gsap": "^3.14.2",
     "react": "^18.3.0",
     "react-dom": "^18.3.0"
   },

@@ -4,4 +4,7 @@ export type { ButtonProps } from "./components/Button/Button";
 export { Logo } from "./components/Logo/Logo";
 export type { LogoProps } from "./components/Logo/Logo";
 
+export { WispearLogoAnimated } from "./components/wispear/WispearLogoAnimated";
+export type { WispearLogoAnimatedProps } from "./components/wispear/WispearLogoAnimated";
+
 export { colors, typography, brand } from "./tokens";
