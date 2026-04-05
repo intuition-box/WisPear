@@ -1,4 +1,6 @@
 
+import { Link as LinkIcon } from "lucide-react";
+
 interface PublishButtonProps {
   status: "idle" | "publishing" | "success" | "error";
   txHash?: string;
@@ -69,7 +71,7 @@ export function PublishButton({
       onClick={onPublish}
       className="flex items-center gap-2 bg-accent hover:bg-accent-hover text-white font-semibold text-[14px] px-7 py-3.5 rounded-2xl shadow-glow-accent hover:shadow-lg transition-all duration-300 hover:-translate-y-0.5 active:translate-y-0"
     >
-      <span>⛓️</span>
+      <LinkIcon className="w-4 h-4" />
       Publish on-chain
     </button>
   );
